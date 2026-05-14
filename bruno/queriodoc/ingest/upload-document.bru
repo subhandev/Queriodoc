@@ -1,0 +1,19 @@
+meta {
+  name: Upload Document
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{baseUrl}}/api/ingest
+  body: multipart
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{clerkToken}}
+}
+
+body:multipart {
+  file: @file(/path/to/your/test.pdf)
+}

@@ -1,0 +1,22 @@
+meta {
+  name: Send Message
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{baseUrl}}/api/chat
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{clerkToken}}
+}
+
+body:json {
+  {
+    "documentId": "{{documentId}}",
+    "message": "What is this document about?"
+  }
+}
