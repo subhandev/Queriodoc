@@ -39,7 +39,7 @@
 
    - Create a project and run SQL migrations in order from [`supabase/migrations/`](supabase/migrations/) (or use the Supabase CLI: `supabase db reset` / `supabase migration up`).
    - Create a **private** storage bucket named `documents`.
-   - Configure **Clerk** as a third-party auth provider and add a **JWT template** named `supabase` so client-side Supabase reads work with RLS (see migration `006_clerk_rls.sql` and [Clerk + Supabase](https://clerk.com/docs/guides/development/integrations/databases/supabase)).
+   - Optional: configure **Clerk** as a Supabase third-party auth provider and add a JWT template named `supabase` if you add direct browser Supabase queries (see migration `006_clerk_rls.sql`). Chat history is loaded via `/api/documents/[id]/messages` and does not require this template.
 
 5. **Run the dev server**
 

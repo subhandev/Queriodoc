@@ -4,7 +4,6 @@ import { useAuth } from "@clerk/nextjs";
 import { useChat as useAIChat } from "@ai-sdk/react";
 import { DefaultChatTransport } from "ai";
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { createClient } from "@/lib/supabase/client";
 import type { MessageRow, QueriodocUIMessage } from "@/types";
 
 function rowToUIMessage(row: MessageRow): QueriodocUIMessage {
@@ -17,7 +16,7 @@ function rowToUIMessage(row: MessageRow): QueriodocUIMessage {
 }
 
 export function useChat(documentId: string) {
-  const { userId, getToken, isLoaded } = useAuth();
+  const { userId, isLoaded } = useAuth();
   const [input, setInput] = useState("");
   const [historyLoaded, setHistoryLoaded] = useState(false);
 
@@ -44,25 +43,20 @@ export function useChat(documentId: string) {
 
     async function loadHistory() {
       setHistoryLoaded(false);
-      const token = await getToken({ template: "supabase" });
-      const supabase = createClient(token ?? undefined);
-      const { data, error } = await supabase
-        .from("messages")
-        .select("id, document_id, user_id, role, content, created_at")
-        .eq("document_id", documentId)
-        .eq("user_id", userId)
-        .order("created_at", { ascending: true });
+      const res = await fetch(`/api/documents/${documentId}/messages`, {
+        credentials: "include",
+      });
 
       if (cancelled) {
         return;
       }
-      if (error) {
-        console.error(error);
+      if (!res.ok) {
+        console.error("Failed to load chat history", await res.text());
         setMessages([]);
         setHistoryLoaded(true);
         return;
       }
-      const rows = (data ?? []) as MessageRow[];
+      const rows = (await res.json()) as MessageRow[];
       setMessages(rows.map(rowToUIMessage));
       setHistoryLoaded(true);
     }
