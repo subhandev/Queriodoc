@@ -138,7 +138,11 @@ export function ChatWindow({ documentId, document, onOpenMenu }: ChatWindowProps
               {!historyLoaded ? (
                 <ChatHistorySkeleton />
               ) : showEmpty ? (
-                <ChatWelcome documentName={document.name} onPick={setInput} />
+                <ChatWelcome
+                  documentName={document.name}
+                  isSample={document.is_sample === true}
+                  onPick={setInput}
+                />
               ) : (
                 <div className="flex min-w-0 w-full flex-col gap-5">
                   {uiMessages.map((m) => (

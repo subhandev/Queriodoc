@@ -12,6 +12,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
+import { sampleCard } from "@/lib/onboarding/copy";
 import type { DocumentRow, FileType } from "@/types";
 import { cn } from "@/lib/utils";
 
@@ -58,6 +59,7 @@ export function DocumentCard({ document, onDelete }: DocumentCardProps) {
     return () => globalThis.document.removeEventListener("mousedown", onClick);
   }, [menuOpen]);
 
+  const isSample = document.is_sample === true;
   const uploadedAt = new Date(document.created_at).toLocaleDateString(undefined, {
     month: "short",
     day: "numeric",
@@ -81,7 +83,14 @@ export function DocumentCard({ document, onDelete }: DocumentCardProps) {
     <>
       <div className="group relative flex flex-col rounded-xl border border-border bg-card p-5 transition-all duration-150 hover:border-[rgba(255,255,255,0.15)] hover:bg-[#1C1C22]">
         <div className="flex items-center justify-between">
+          <div className="flex flex-wrap items-center gap-2">
           <TypeBadge type={document.file_type} />
+          {isSample ? (
+            <span className="inline-flex items-center rounded-full border border-primary/30 bg-primary/10 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-primary">
+              {sampleCard.badge}
+            </span>
+          ) : null}
+        </div>
           <div className="relative" ref={ref}>
             <button
               type="button"
@@ -121,7 +130,12 @@ export function DocumentCard({ document, onDelete }: DocumentCardProps) {
         >
           {document.name}
         </h3>
-        <p className="mt-1 text-[13px] text-muted-foreground">Uploaded {uploadedAt}</p>
+        <p className="mt-1 text-[13px] text-muted-foreground">
+          {isSample ? sampleCard.subtitle : `Uploaded ${uploadedAt}`}
+        </p>
+        {isSample ? (
+          <p className="mt-1 text-[12px] text-muted-foreground/80">{sampleCard.helper}</p>
+        ) : null}
         <p className="mt-2 inline-flex items-center gap-1.5 text-[13px] text-muted-foreground">
           <MessageCircle className="h-3.5 w-3.5" />
           {messageCount} {messageLabel}

@@ -16,6 +16,7 @@ export type DocumentRow = {
   file_type: FileType;
   status: DocumentStatus;
   chunk_count: number | null;
+  is_sample?: boolean;
   message_count?: number;
   created_at: string;
 };

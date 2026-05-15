@@ -20,13 +20,15 @@ export function SignUpForm() {
   const router = useRouter();
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [name, setName] = useState("");
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [code, setCode] = useState("");
   const [pendingVerification, setPendingVerification] = useState(false);
   const [formError, setFormError] = useState<string | undefined>();
-  const [nameError, setNameError] = useState<string | undefined>();
+  const [firstNameError, setFirstNameError] = useState<string | undefined>();
+  const [lastNameError, setLastNameError] = useState<string | undefined>();
   const [emailError, setEmailError] = useState<string | undefined>();
   const [passwordError, setPasswordError] = useState<string | undefined>();
 
@@ -36,7 +38,8 @@ export function SignUpForm() {
 
     setLoading(true);
     setFormError(undefined);
-    setNameError(undefined);
+    setFirstNameError(undefined);
+    setLastNameError(undefined);
     setEmailError(undefined);
     setPasswordError(undefined);
 
@@ -52,13 +55,9 @@ export function SignUpForm() {
         return;
       }
 
-      const parts = name.trim().split(/\s+/);
-      const firstName = parts[0] ?? "";
-      const lastName = parts.slice(1).join(" ");
-
       const createResult = await signUp.create({
-        firstName,
-        lastName: lastName || undefined,
+        firstName: firstName.trim(),
+        lastName: lastName.trim(),
         emailAddress: email,
         password,
       });
@@ -74,7 +73,8 @@ export function SignUpForm() {
     } catch (err: unknown) {
       const clerkErr = err as { errors?: Parameters<typeof getClerkErrorMessage>[0] };
       const errors = clerkErr.errors;
-      setNameError(getClerkErrorMessage(errors, "first_name"));
+      setFirstNameError(getClerkErrorMessage(errors, "first_name"));
+      setLastNameError(getClerkErrorMessage(errors, "last_name"));
       setEmailError(getClerkErrorMessage(errors, "email_address"));
       setPasswordError(getClerkErrorMessage(errors, "password"));
       setFormError(getClerkErrorMessage(errors));
@@ -113,7 +113,7 @@ export function SignUpForm() {
       }
     >
       <form onSubmit={(e) => void onSubmit(e)} className="space-y-4">
-        {formError && !nameError && !emailError && !passwordError ? (
+        {formError && !firstNameError && !lastNameError && !emailError && !passwordError ? (
           <p className="text-[12px] text-destructive" role="alert">
             {formError}
           </p>
@@ -136,19 +136,34 @@ export function SignUpForm() {
           </Field>
         ) : (
           <>
-            <Field id="name" label="Full name" error={nameError}>
-              <input
-                id="name"
-                type="text"
-                autoComplete="name"
-                placeholder="Your name"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                disabled={loading}
-                className={authInputClass(!!nameError)}
-                required
-              />
-            </Field>
+            <div className="grid grid-cols-2 gap-3">
+              <Field id="firstName" label="First name" error={firstNameError}>
+                <input
+                  id="firstName"
+                  type="text"
+                  autoComplete="given-name"
+                  placeholder="First name"
+                  value={firstName}
+                  onChange={(e) => setFirstName(e.target.value)}
+                  disabled={loading}
+                  className={authInputClass(!!firstNameError)}
+                  required
+                />
+              </Field>
+              <Field id="lastName" label="Last name" error={lastNameError}>
+                <input
+                  id="lastName"
+                  type="text"
+                  autoComplete="family-name"
+                  placeholder="Last name"
+                  value={lastName}
+                  onChange={(e) => setLastName(e.target.value)}
+                  disabled={loading}
+                  className={authInputClass(!!lastNameError)}
+                  required
+                />
+              </Field>
+            </div>
             <Field id="email" label="Email address" error={emailError}>
               <input
                 id="email"

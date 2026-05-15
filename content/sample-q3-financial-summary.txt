@@ -1,0 +1,71 @@
+[SAMPLE DOCUMENT — Synthetic data for demonstration only. Not a real company or filing.]
+
+ACME ANALYTICS, INC.
+Q3 2025 FINANCIAL SUMMARY
+Prepared for internal review — fictional demonstration document
+
+EXECUTIVE SUMMARY
+
+Acme Analytics, Inc. delivered a strong third quarter of fiscal 2025, with total revenue reaching $42.1 million, representing 18.4% year-over-year growth. Gross margin improved to 72%, up from 69% in Q3 2024, reflecting better software mix and infrastructure efficiency. Operating income was $6.8 million, or 16.2% of revenue, compared to $4.9 million (13.7% margin) in the prior-year quarter.
+
+The quarter was defined by continued enterprise momentum, successful expansion within existing accounts, and the launch of Acme Insights 4.0, our unified analytics workspace. Management remains focused on profitable growth, disciplined hiring, and expanding partnerships in regulated industries.
+
+Key highlights:
+- Revenue: $42.1M (+18.4% YoY)
+- Enterprise subscription revenue: +24% YoY
+- Average contract value (ACV): +9% YoY
+- Net revenue retention (NRR): 118%
+- Cash and equivalents: $94.2M
+
+REVENUE PERFORMANCE
+
+Total revenue of $42.1 million exceeded the internal plan of $40.5 million. Growth was driven primarily by enterprise subscription expansion (+24% YoY), which accounted for 71% of total revenue. New logo additions totaled 38 enterprise customers in Q3, including three Fortune 500 deployments in financial services and healthcare.
+
+Average contract value increased 9% year-over-year to $186,000 for enterprise accounts, supported by upsells into advanced governance modules and increased seat counts. Professional services revenue was $3.2 million (7.6% of total), flat sequentially as the company prioritized self-serve onboarding for mid-market accounts.
+
+Expansion revenue from existing customers represented 62% of new ARR booked in the quarter, underscoring strong product adoption and customer success outcomes.
+
+SEGMENT RESULTS
+
+Enterprise (companies with 1,000+ employees): $29.9M revenue (71% of total), +22% YoY. This segment benefited from multi-year renewals and security certification milestones (SOC 2 Type II, HIPAA-ready deployment options).
+
+SMB (50–999 employees): $8.4M revenue (20% of total), +11% YoY. SMB growth was steady; conversion from free trial improved after in-app guided setup shipped in August.
+
+Public sector: $3.8M revenue (9% of total), +14% YoY. Two state-level analytics modernization projects contributed to pipeline conversion.
+
+PRODUCT AND CUSTOMER HIGHLIGHTS
+
+Acme Insights 4.0 launched in July with collaborative dashboards, natural-language query over governed datasets, and export controls for compliance teams. Early adopters reported 30% faster time-to-insight in pilot surveys.
+
+Customer satisfaction (NPS) reached 52, up from 47 in Q2. A flagship retail customer expanded deployment to 4,200 seats. A regional health network completed go-live on predictive staffing models using Acme’s forecasting module.
+
+OPERATING EXPENSES AND PROFITABILITY
+
+Total operating expenses were $23.5 million, or 55.8% of revenue, compared to 55.3% in Q2 2025.
+
+Research and development: $9.3M (22.1% of revenue), focused on AI-assisted analytics, pipeline reliability, and mobile executive summaries.
+
+Sales and marketing: $10.1M (24.0% of revenue), with increased investment in enterprise field teams and partner co-marketing.
+
+General and administrative: $4.1M (9.7% of revenue), including legal, finance, and people operations.
+
+Operating income margin expanded to 16.2% from 14.8% in Q2, demonstrating operating leverage as revenue scaled.
+
+CASH AND BALANCE SHEET
+
+Cash, cash equivalents, and short-term investments ended the quarter at $94.2 million. Free cash flow was positive at $2.1 million. The company has no long-term debt. Management estimates runway exceeding 36 months at current burn levels excluding opportunistic acquisitions.
+
+OUTLOOK AND RISKS
+
+Q4 2025 guidance (internal): revenue of $43.5M to $44.5M, implying full-year revenue growth of approximately 17–19% year-over-year. The company plans cautious hiring in Q4, prioritizing engineering roles tied to enterprise security and AI quality.
+
+Principal risks include:
+1. Competitive pressure from larger platform vendors bundling analytics at aggressive price points.
+2. Macro uncertainty affecting SMB and public-sector budget cycles.
+3. Talent retention in specialized machine-learning and data engineering roles.
+
+Mitigations include deeper vertical solutions, partner-led implementations, and a refreshed equity refresh program for critical technical staff.
+
+CONCLUSION
+
+Q3 2025 demonstrated durable growth, improving margins, and strong enterprise demand. Acme Analytics remains well positioned to invest in product innovation while maintaining a path to sustained profitability. This document is synthetic demo data for product evaluation purposes only.

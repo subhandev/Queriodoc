@@ -2,6 +2,7 @@
 
 import { FileText, Inbox } from "lucide-react";
 import { DocumentCard } from "@/components/documents/DocumentCard";
+import { emptyLibrary } from "@/lib/onboarding/copy";
 import type { DocumentRow } from "@/types";
 
 function SkeletonCard() {
@@ -52,10 +53,8 @@ export function DocumentList({
     return (
       <div className="flex flex-col items-center justify-center py-24 text-center">
         <Inbox className="h-12 w-12 text-muted-foreground" strokeWidth={1.5} />
-        <h2 className="mt-5 text-[18px] font-medium text-foreground">No documents yet</h2>
-        <p className="mt-1.5 max-w-sm text-[14px] text-muted-foreground">
-          Drag and drop a file into the area above, or click it to browse.
-        </p>
+        <h2 className="mt-5 text-[18px] font-medium text-foreground">{emptyLibrary.title}</h2>
+        <p className="mt-1.5 max-w-sm text-[14px] text-muted-foreground">{emptyLibrary.body}</p>
       </div>
     );
   }

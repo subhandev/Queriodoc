@@ -1,17 +1,39 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { Search } from "lucide-react";
-import { useState } from "react";
+import { Loader2, Search } from "lucide-react";
+import { useMemo, useState } from "react";
 import { UploadZone } from "@/components/upload/UploadZone";
 import { DocumentList } from "@/components/documents/DocumentList";
+import { OnboardingBanner } from "@/components/onboarding/OnboardingBanner";
 import { useDocuments } from "@/hooks/useDocuments";
+import { useOnboardingSample } from "@/hooks/useOnboardingSample";
 import { authInputClass } from "@/components/auth/AuthShell";
+import { getDocumentsPageSubtitle, seedingCopy } from "@/lib/onboarding/copy";
 
 export default function DocumentsLibraryPage() {
   const router = useRouter();
   const { documents, isLoading, error, refetch, deleteDocument } = useDocuments();
   const [query, setQuery] = useState("");
+
+  const { seeding, seedError } = useOnboardingSample({
+    documentsCount: documents.length,
+    isLoading,
+    onSeeded: refetch,
+  });
+
+  const sampleDocument = useMemo(
+    () => documents.find((d) => d.is_sample),
+    [documents],
+  );
+  const hasUserUploads = useMemo(
+    () => documents.some((d) => !d.is_sample),
+    [documents],
+  );
+  const showSampleBanner = Boolean(sampleDocument) && !hasUserUploads;
+  const hasSampleOnly = showSampleBanner;
+
+  const pageBusy = isLoading || seeding;
 
   return (
     <>
@@ -21,7 +43,7 @@ export default function DocumentsLibraryPage() {
             My Documents
           </h1>
           <p className="mt-1 text-[14px] text-muted-foreground">
-            All your uploaded documents in one place.
+            {getDocumentsPageSubtitle(hasSampleOnly)}
           </p>
         </div>
         <div className="relative w-full sm:w-[280px]">
@@ -35,6 +57,31 @@ export default function DocumentsLibraryPage() {
           />
         </div>
       </div>
+
+      {seeding ? (
+        <div
+          className="mt-6 flex items-center gap-3 rounded-xl border border-border bg-card px-4 py-3"
+          role="status"
+        >
+          <Loader2 className="h-4 w-4 shrink-0 animate-spin text-primary" />
+          <div>
+            <p className="text-[14px] font-medium text-foreground">{seedingCopy.title}</p>
+            <p className="text-[13px] text-muted-foreground">{seedingCopy.subtitle}</p>
+          </div>
+        </div>
+      ) : null}
+
+      {seedError ? (
+        <p className="mt-4 text-sm text-destructive" role="alert">
+          {seedError}
+        </p>
+      ) : null}
+
+      {showSampleBanner && sampleDocument ? (
+        <div className="mt-6">
+          <OnboardingBanner sampleDocumentId={sampleDocument.id} />
+        </div>
+      ) : null}
 
       <div className="mt-8">
         <UploadZone
@@ -54,7 +101,7 @@ export default function DocumentsLibraryPage() {
       <div className="mt-8">
         <DocumentList
           documents={documents}
-          isLoading={isLoading}
+          isLoading={pageBusy}
           query={query}
           onDelete={deleteDocument}
         />
