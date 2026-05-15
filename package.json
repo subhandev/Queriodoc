@@ -6,7 +6,10 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "verify:setup": "node scripts/verify-setup.mjs",
+    "db:push": "supabase db push",
+    "db:migrations": "supabase migration list"
   },
   "dependencies": {
     "@ai-sdk/openai": "^3.0.63",

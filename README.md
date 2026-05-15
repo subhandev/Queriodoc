@@ -37,11 +37,26 @@
 
 4. **Supabase**
 
-   - Create a project and run SQL migrations in order from [`supabase/migrations/`](supabase/migrations/) (or use the Supabase CLI: `supabase db reset` / `supabase migration up`).
-   - Create a **private** storage bucket named `documents`.
-   - Optional: configure **Clerk** as a Supabase third-party auth provider and add a JWT template named `supabase` if you add direct browser Supabase queries (see migration `006_clerk_rls.sql`). Chat history is loaded via `/api/documents/[id]/messages` and does not require this template.
+   **Recommended (CLI):** See [`docs/SUPABASE_CLI.md`](docs/SUPABASE_CLI.md).
 
-5. **Run the dev server**
+   ```bash
+   supabase login
+   supabase link --project-ref <your-project-ref>
+   npm run db:push
+   ```
+
+   **Alternative:** Run SQL migrations manually in the Supabase SQL editor (`001`–`009` in [`supabase/migrations/`](supabase/migrations/)).
+
+   Migration `007_storage_bucket.sql` creates the private **`documents`** storage bucket.
+   - Optional: configure **Clerk** as a Supabase third-party auth provider and JWT template `supabase` for direct browser queries (see [`docs/SECURITY.md`](docs/SECURITY.md)). Chat history uses `/api/documents/[id]/messages` and does not require this.
+
+5. **Verify environment**
+
+   ```bash
+   npm run verify:setup
+   ```
+
+6. **Run the dev server**
 
    ```bash
    npm run dev
@@ -51,11 +66,31 @@
 
 ## RAG pipeline (short)
 
-Documents are parsed into text, split into overlapping word chunks, and embedded with OpenAI. Vectors are stored in Postgres; at question time the user query is embedded, nearest chunks are retrieved with `match_chunks`, and a strict system prompt feeds GPT-4o so answers stay on-document.
+1. **Upload** — `POST /api/ingest` or `POST /api/upload` stores the file in Supabase Storage and creates a `processing` document row.
+2. **Process** — `POST /api/documents/[id]/process` parses, chunks, embeds, and marks the document `ready` (client polls until complete).
+3. **Chat** — `POST /api/chat` embeds the question, calls `match_chunks` (similarity threshold 0.5), and streams GPT-4o with a strict context-only prompt.
+
+## API routes
+
+| Method | Path | Purpose |
+|--------|------|---------|
+| POST | `/api/ingest`, `/api/upload` | Upload file (alias) |
+| POST | `/api/documents/[id]/process` | Chunk + embed document |
+| GET | `/api/documents` | List user documents |
+| GET/DELETE | `/api/documents/[id]` | Fetch or delete one document |
+| GET | `/api/documents/[id]/messages` | Chat history |
+| POST | `/api/chat` | RAG chat (streaming) |
+
+## Deploy on Vercel
+
+1. Import the repo and set the same variables as [`.env.example`](.env.example).
+2. Apply Supabase migrations `001`–`009` on your linked project.
+3. [`vercel.json`](vercel.json) sets longer timeouts for ingest/process/chat routes.
+4. Update the demo URL below after your first production deploy.
 
 ## Production upgrade path
 
-In production, the ingest pipeline would move to an async queue (Inngest, Trigger.dev, or similar) to handle large documents without serverless timeout constraints.
+For very large files or high volume, move `process` to a durable queue (Inngest, Trigger.dev). The upload/process split is already in place.
 
 ## Live demo
 

@@ -37,3 +37,7 @@ next-env.d.ts
 
 # Bruno
 bruno/environments/local.bru
+
+# Supabase CLI
+supabase/.branches
+supabase/.temp

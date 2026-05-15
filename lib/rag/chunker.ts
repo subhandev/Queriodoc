@@ -16,12 +16,23 @@ export function chunkText(text: string): string[] {
     return [];
   }
 
+  if (words.length <= MIN_CHUNK_WORDS) {
+    return [words.join(" ")];
+  }
+
   const chunks: string[] = [];
   let start = 0;
   while (start < words.length) {
-    const slice = words.slice(start, start + CHUNK_WORDS);
-    if (slice.length >= MIN_CHUNK_WORDS) {
+    const end = Math.min(start + CHUNK_WORDS, words.length);
+    const slice = words.slice(start, end);
+    const isLast = end >= words.length;
+
+    if (slice.length >= MIN_CHUNK_WORDS || isLast) {
       chunks.push(slice.join(" "));
+    }
+
+    if (isLast) {
+      break;
     }
     start += STEP;
   }

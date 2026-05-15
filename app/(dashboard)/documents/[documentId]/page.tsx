@@ -5,6 +5,8 @@ import { useEffect, useState, useCallback } from "react";
 import { ArrowLeft, Loader2 } from "lucide-react";
 import { buttonVariants } from "@/components/ui/button";
 import { ChatWindow } from "@/components/chat/ChatWindow";
+import { DocumentSidebar } from "@/components/documents/DocumentSidebar";
+import { useDocuments } from "@/hooks/useDocuments";
 import { cn } from "@/lib/utils";
 import type { DocumentRow } from "@/types";
 
@@ -14,6 +16,7 @@ type PageProps = {
 
 export default function DocumentChatPage({ params }: PageProps) {
   const { documentId } = params;
+  const { documents, isLoading: listLoading, refetch } = useDocuments();
   const [doc, setDoc] = useState<DocumentRow | null>(null);
   const [loadError, setLoadError] = useState<string | null>(null);
 
@@ -40,20 +43,25 @@ export default function DocumentChatPage({ params }: PageProps) {
     }
     const id = setInterval(() => {
       void fetchDoc();
+      void refetch();
     }, 2000);
     return () => clearInterval(id);
-  }, [doc, fetchDoc]);
+  }, [doc, fetchDoc, refetch]);
+
+  const backLink = (
+    <Link
+      href="/documents"
+      className={cn(buttonVariants({ variant: "ghost", size: "sm" }), "gap-2 lg:hidden")}
+    >
+      <ArrowLeft className="size-4" />
+      Back
+    </Link>
+  );
 
   if (loadError) {
     return (
       <div className="mx-auto max-w-3xl space-y-4 py-8">
-        <Link
-          href="/documents"
-          className={cn(buttonVariants({ variant: "ghost", size: "sm" }), "gap-2")}
-        >
-          <ArrowLeft className="size-4" />
-          Back to documents
-        </Link>
+        {backLink}
         <p className="text-destructive">{loadError}</p>
       </div>
     );
@@ -70,19 +78,20 @@ export default function DocumentChatPage({ params }: PageProps) {
 
   if (doc.status === "processing") {
     return (
-      <div className="mx-auto max-w-3xl space-y-6 py-8">
-        <Link
-          href="/documents"
-          className={cn(buttonVariants({ variant: "ghost", size: "sm" }), "gap-2")}
-        >
-          <ArrowLeft className="size-4" />
-          Back
-        </Link>
-        <div className="flex flex-col items-center justify-center gap-3 rounded-xl border border-border bg-card py-16">
-          <Loader2 className="size-8 animate-spin text-muted-foreground" />
-          <p className="text-sm text-muted-foreground">
-            Processing &ldquo;{doc.name}&rdquo; — this may take a moment…
-          </p>
+      <div className="flex min-h-[calc(100vh-6rem)]">
+        <DocumentSidebar
+          documents={documents}
+          currentDocumentId={documentId}
+          isLoading={listLoading}
+        />
+        <div className="mx-auto max-w-3xl flex-1 space-y-6 py-8">
+          {backLink}
+          <div className="flex flex-col items-center justify-center gap-3 rounded-xl border border-border bg-card py-16">
+            <Loader2 className="size-8 animate-spin text-muted-foreground" />
+            <p className="text-sm text-muted-foreground">
+              Processing &ldquo;{doc.name}&rdquo; — this may take a moment…
+            </p>
+          </div>
         </div>
       </div>
     );
@@ -90,34 +99,36 @@ export default function DocumentChatPage({ params }: PageProps) {
 
   if (doc.status === "error") {
     return (
-      <div className="mx-auto max-w-3xl space-y-4 py-8">
-        <Link
-          href="/documents"
-          className={cn(buttonVariants({ variant: "ghost", size: "sm" }), "gap-2")}
-        >
-          <ArrowLeft className="size-4" />
-          Back
-        </Link>
-        <p className="text-destructive">
-          This document failed to process. Try uploading again.
-        </p>
+      <div className="flex min-h-[calc(100vh-6rem)]">
+        <DocumentSidebar
+          documents={documents}
+          currentDocumentId={documentId}
+          isLoading={listLoading}
+        />
+        <div className="mx-auto max-w-3xl flex-1 space-y-4 py-8">
+          {backLink}
+          <p className="text-destructive">
+            This document failed to process. Try uploading again.
+          </p>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="mx-auto flex max-w-4xl flex-col gap-4">
-      <div className="flex items-center gap-3">
-        <Link
-          href="/documents"
-          className={cn(buttonVariants({ variant: "ghost", size: "sm" }), "gap-2")}
-        >
-          <ArrowLeft className="size-4" />
-          Back
-        </Link>
-        <span className="text-sm text-muted-foreground truncate">{doc.name}</span>
+    <div className="flex min-h-[calc(100vh-6rem)] -m-4 md:-m-8">
+      <DocumentSidebar
+        documents={documents}
+        currentDocumentId={documentId}
+        isLoading={listLoading}
+      />
+      <div className="flex min-w-0 flex-1 flex-col gap-4 p-4 md:p-8">
+        <div className="flex items-center gap-3 lg:hidden">
+          {backLink}
+          <span className="truncate text-sm text-muted-foreground">{doc.name}</span>
+        </div>
+        <ChatWindow documentId={documentId} documentName={doc.name} />
       </div>
-      <ChatWindow documentId={documentId} documentName={doc.name} />
     </div>
   );
 }

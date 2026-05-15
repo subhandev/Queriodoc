@@ -24,16 +24,20 @@ export async function storeChunks(
   }
 }
 
+const DEFAULT_SIMILARITY_THRESHOLD = 0.5;
+
 export async function similaritySearch(
   documentId: string,
   queryEmbedding: number[],
   topK: number = 5,
+  matchThreshold: number = DEFAULT_SIMILARITY_THRESHOLD,
 ): Promise<{ content: string; chunk_index: number }[]> {
   const supabase = createAdminClient();
   const { data, error } = await supabase.rpc("match_chunks", {
     query_embedding: queryEmbedding,
     match_document_id: documentId,
     match_count: topK,
+    match_threshold: matchThreshold,
   });
 
   if (error) {

@@ -2,12 +2,6 @@ import { auth } from "@clerk/nextjs/server";
 import { randomUUID } from "crypto";
 import { NextRequest } from "next/server";
 import { jsonError } from "@/lib/api/json";
-import { parseDocx } from "@/lib/parsers/docxParser";
-import { parsePdf } from "@/lib/parsers/pdfParser";
-import { parseTxt } from "@/lib/parsers/txtParser";
-import { chunkText } from "@/lib/rag/chunker";
-import { embedChunks } from "@/lib/rag/embedder";
-import { storeChunks } from "@/lib/rag/vectorStore";
 import { createAdminClient } from "@/lib/supabase/server";
 import type { FileType } from "@/types";
 
@@ -27,17 +21,6 @@ function fileTypeFromName(name: string): FileType | null {
     return "txt";
   }
   return null;
-}
-
-async function extractText(buffer: Buffer, fileType: FileType): Promise<string> {
-  switch (fileType) {
-    case "pdf":
-      return parsePdf(buffer);
-    case "docx":
-      return parseDocx(buffer);
-    case "txt":
-      return parseTxt(buffer);
-  }
 }
 
 export async function POST(req: NextRequest) {
@@ -70,8 +53,7 @@ export async function POST(req: NextRequest) {
   const buffer = Buffer.from(await file.arrayBuffer());
   const supabase = createAdminClient();
   const id = randomUUID();
-  const ext = fileType;
-  const storagePath = `${userId}/${id}.${ext}`;
+  const storagePath = `${userId}/${id}.${fileType}`;
 
   const { error: uploadError } = await supabase.storage
     .from("documents")
@@ -103,40 +85,9 @@ export async function POST(req: NextRequest) {
 
   const documentId = docRow.id as string;
 
-  const markError = async () => {
-    await supabase
-      .from("documents")
-      .update({ status: "error" })
-      .eq("id", documentId);
-  };
-
-  try {
-    const text = await extractText(buffer, fileType);
-    const chunks = chunkText(text);
-    if (chunks.length === 0) {
-      await supabase
-        .from("documents")
-        .update({ status: "ready", chunk_count: 0 })
-        .eq("id", documentId);
-      return Response.json({ documentId, chunkCount: 0 });
-    }
-
-    const embeddings = await embedChunks(chunks);
-    await storeChunks(documentId, chunks, embeddings);
-
-    const { error: readyError } = await supabase
-      .from("documents")
-      .update({ status: "ready", chunk_count: chunks.length })
-      .eq("id", documentId);
-
-    if (readyError) {
-      throw new Error(readyError.message);
-    }
-
-    return Response.json({ documentId, chunkCount: chunks.length });
-  } catch (e) {
-    await markError();
-    const message = e instanceof Error ? e.message : "Processing failed";
-    return jsonError(message, 500);
-  }
+  return Response.json({
+    documentId,
+    status: "processing",
+    chunkCount: null,
+  });
 }

@@ -1,8 +1,35 @@
 "use client";
 
 import { useCallback, useState } from "react";
+import type { DocumentRow } from "@/types";
 
 type UploadPhase = "idle" | "uploading" | "processing" | "ready" | "error";
+
+function sleep(ms: number) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+async function pollDocumentReady(documentId: string): Promise<DocumentRow> {
+  const maxAttempts = 120;
+  for (let i = 0; i < maxAttempts; i++) {
+    const res = await fetch(`/api/documents/${documentId}`, {
+      credentials: "include",
+    });
+    if (!res.ok) {
+      const body = (await res.json().catch(() => ({}))) as { error?: string };
+      throw new Error(body.error ?? "Failed to check document status");
+    }
+    const doc = (await res.json()) as DocumentRow;
+    if (doc.status === "ready") {
+      return doc;
+    }
+    if (doc.status === "error") {
+      throw new Error("Document processing failed. Try uploading again.");
+    }
+    await sleep(1500);
+  }
+  throw new Error("Processing timed out. Try again or use a smaller file.");
+}
 
 export function useUpload() {
   const [phase, setPhase] = useState<UploadPhase>("idle");
@@ -18,15 +45,12 @@ export function useUpload() {
     form.append("file", file);
 
     try {
-      setProgress(35);
+      setProgress(25);
       const res = await fetch("/api/ingest", {
         method: "POST",
         body: form,
         credentials: "include",
       });
-
-      setPhase("processing");
-      setProgress(70);
 
       const text = await res.text();
       let parsed: unknown;
@@ -43,13 +67,31 @@ export function useUpload() {
         throw new Error(errObj?.error ?? "Upload failed");
       }
 
-      const data = parsed as { documentId: string; chunkCount: number };
+      const data = parsed as { documentId: string };
       if (!data?.documentId) {
         throw new Error("Invalid response from server.");
       }
+
+      setPhase("processing");
+      setProgress(45);
+
+      const processRes = await fetch(`/api/documents/${data.documentId}/process`, {
+        method: "POST",
+        credentials: "include",
+      });
+
+      if (!processRes.ok) {
+        const errBody = (await processRes.json().catch(() => ({}))) as {
+          error?: string;
+        };
+        throw new Error(errBody.error ?? "Processing failed");
+      }
+
+      setProgress(70);
+      const doc = await pollDocumentReady(data.documentId);
       setProgress(100);
       setPhase("ready");
-      return data.documentId;
+      return doc.id;
     } catch (e) {
       setPhase("error");
       const message = e instanceof Error ? e.message : "Upload failed";
