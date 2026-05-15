@@ -94,7 +94,7 @@ For very large files or high volume, move `process` to a durable queue (Inngest,
 
 ## Live demo
 
-**Demo:** [https://your-demo.vercel.app](https://your-demo.vercel.app) (replace with your deployment URL)
+**Demo:** [https://queriodoc.vercel.app](https://queriodoc.vercel.app)
 
 ## Project layout
 
