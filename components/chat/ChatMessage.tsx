@@ -46,16 +46,16 @@ export function ChatMessage({ message }: ChatMessageProps) {
   return (
     <div className={`flex w-full ${isUser ? "justify-end" : "justify-start"}`}>
       <div
-        className={`max-w-[85%] rounded-2xl px-4 py-2 text-sm shadow-sm ${
+        className={`max-w-[85%] px-4 py-2.5 text-[13.5px] ${
           isUser
-            ? "bg-violet-600 text-white"
-            : "bg-muted text-foreground"
+            ? "rounded-2xl rounded-tr-sm bg-primary text-primary-foreground"
+            : "rounded-2xl rounded-tl-sm border border-border bg-secondary/60 text-foreground"
         }`}
       >
         {timeLabel && (
           <p
             className={`mb-1 text-[10px] uppercase tracking-wide ${
-              isUser ? "text-violet-100" : "text-muted-foreground"
+              isUser ? "text-primary-foreground/70" : "text-muted-foreground"
             }`}
           >
             {timeLabel}

@@ -97,7 +97,7 @@ export function UploadZone({ onSuccess, className }: UploadZoneProps) {
         onDragOver={handleDragOver}
         onClick={() => inputRef.current?.click()}
         className={cn(
-          "flex cursor-pointer flex-col items-center justify-center rounded-xl border border-dashed border-border bg-muted/30 px-6 py-10 text-center transition hover:bg-muted/50",
+          "flex cursor-pointer flex-col items-center justify-center rounded-xl border border-dashed border-border bg-card/40 px-6 py-10 text-center transition hover:border-primary/40 hover:bg-card/60",
           isUploading && "pointer-events-none opacity-70",
         )}
       >

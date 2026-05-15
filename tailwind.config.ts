@@ -43,7 +43,7 @@ const config: Config = {
         },
         destructive: {
           DEFAULT: "var(--destructive)",
-          foreground: "var(--destructive)",
+          foreground: "var(--destructive-foreground)",
         },
         border: "var(--border)",
         input: "var(--input)",

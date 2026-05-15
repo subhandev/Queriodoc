@@ -43,7 +43,7 @@ export function ChatWindow({ documentId, documentName }: ChatWindowProps) {
   const showEmpty = historyLoaded && uiMessages.length === 0;
 
   return (
-    <div className="flex h-[calc(100vh-8rem)] flex-col overflow-hidden rounded-xl border border-border bg-card shadow-sm">
+    <div className="flex h-[calc(100vh-8rem)] flex-col overflow-hidden rounded-xl border border-border bg-card">
       <header className="border-b border-border px-4 py-3">
         <h1 className="text-lg font-semibold leading-tight">{documentName}</h1>
         <p className="text-xs text-muted-foreground">
