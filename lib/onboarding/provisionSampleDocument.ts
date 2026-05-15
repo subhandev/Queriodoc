@@ -20,6 +20,14 @@ function toVectorLiteral(embedding: number[]): string {
   return `[${embedding.join(",")}]`;
 }
 
+function isMissingColumnOrSchemaCacheError(message: string): boolean {
+  const m = message.toLowerCase();
+  return (
+    m.includes("schema cache") ||
+    (m.includes("could not find") && m.includes("column"))
+  );
+}
+
 export type ProvisionSampleResult = {
   documentId: string;
   created: boolean;
@@ -39,20 +47,48 @@ export async function provisionSampleDocument(
     throw new Error(countError.message);
   }
   if ((count ?? 0) > 0) {
-    const { data: existing } = await supabase
+    const existingQuery = await supabase
       .from("documents")
       .select("id, sample_content_version")
       .eq("user_id", userId)
       .eq("is_sample", true)
       .maybeSingle();
 
-    if (existing?.id) {
-      await refreshSampleChunksIfStale(
-        userId,
-        existing.id as string,
-        existing.sample_content_version as number | null | undefined,
+    let sampleDocId: string | undefined;
+    /** False when DB has no `sample_content_version` column yet (migration not applied). */
+    let sampleVersionTracked = false;
+    let sampleContentVersion: number | null | undefined;
+
+    if (
+      existingQuery.error &&
+      isMissingColumnOrSchemaCacheError(existingQuery.error.message)
+    ) {
+      console.warn(
+        "[provisionSampleDocument] sample_content_version not in DB schema cache; run migration 012_message_sources_and_sample_version.sql. Skipping demo chunk refresh.",
       );
-      return { documentId: existing.id as string, created: false };
+      const fallback = await supabase
+        .from("documents")
+        .select("id")
+        .eq("user_id", userId)
+        .eq("is_sample", true)
+        .maybeSingle();
+      if (fallback.error) {
+        throw new Error(fallback.error.message);
+      }
+      sampleDocId = fallback.data?.id ?? undefined;
+    } else if (existingQuery.error) {
+      throw new Error(existingQuery.error.message);
+    } else if (existingQuery.data?.id) {
+      sampleDocId = existingQuery.data.id;
+      sampleVersionTracked = true;
+      sampleContentVersion = existingQuery.data.sample_content_version;
+    }
+
+    if (sampleDocId) {
+      if (sampleVersionTracked) {
+        await refreshSampleChunksIfStale(userId, sampleDocId, sampleContentVersion);
+      }
+      return { documentId: sampleDocId, created: false };
     }
 
     const { data: first } = await supabase
@@ -85,17 +121,30 @@ export async function provisionSampleDocument(
     throw new Error(`Storage upload failed: ${uploadError.message}`);
   }
 
-  const { error: insertError } = await supabase.from("documents").insert({
+  const insertBase = {
     id: documentId,
     user_id: userId,
     name: payload.name || SAMPLE_DOCUMENT_NAME,
     file_path: storagePath,
     file_type: payload.fileType,
-    status: "ready",
+    status: "ready" as const,
     chunk_count: payload.chunks.length,
     is_sample: true,
-    sample_content_version: SAMPLE_CONTENT_VERSION,
-  });
+  };
+
+  let insertError = (
+    await supabase.from("documents").insert({
+      ...insertBase,
+      sample_content_version: SAMPLE_CONTENT_VERSION,
+    })
+  ).error;
+
+  if (insertError && isMissingColumnOrSchemaCacheError(insertError.message)) {
+    console.warn(
+      "[provisionSampleDocument] Insert without sample_content_version — apply migration 012_message_sources_and_sample_version.sql when possible.",
+    );
+    ({ error: insertError } = await supabase.from("documents").insert(insertBase));
+  }
 
   if (insertError) {
     await supabase.storage.from("documents").remove([storagePath]);
