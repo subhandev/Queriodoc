@@ -73,7 +73,7 @@ export function ChatWelcome({
 
   if (isSample) {
     return (
-      <div className="mx-auto mt-10 max-w-[560px] rounded-xl border border-border bg-card p-6 text-center">
+      <div className="mx-auto mt-8 max-w-[560px] rounded-xl border border-border bg-card p-5 text-center sm:mt-10 sm:p-6">
         <div className="mx-auto mb-3 inline-flex h-10 w-10 items-center justify-center rounded-full bg-[rgba(124,109,250,0.12)] text-primary">
           <MessageCircle size={20} />
         </div>
@@ -90,7 +90,7 @@ export function ChatWelcome({
   }
 
   return (
-    <div className="mx-auto mt-10 max-w-[520px] rounded-xl border border-border bg-card p-6 text-center">
+    <div className="mx-auto mt-8 max-w-[520px] rounded-xl border border-border bg-card p-5 text-center sm:mt-10 sm:p-6">
       <div className="mx-auto mb-3 inline-flex h-10 w-10 items-center justify-center rounded-full bg-[rgba(124,109,250,0.12)] text-primary">
         <MessageCircle size={20} />
       </div>

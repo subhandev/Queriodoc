@@ -109,7 +109,7 @@ export function DocumentCard({ document, onDelete }: DocumentCardProps) {
               setMenuOpen((v) => !v);
             }}
             aria-label="Document options"
-            className="flex h-7 w-7 items-center justify-center rounded-md text-muted-foreground opacity-0 transition-all duration-150 hover:bg-white/[0.05] hover:text-foreground group-hover:opacity-100"
+            className="flex h-7 w-7 items-center justify-center rounded-md text-muted-foreground opacity-100 transition-all duration-150 hover:bg-white/[0.05] hover:text-foreground sm:opacity-0 sm:group-hover:opacity-100"
           >
             <MoreHorizontal className="h-4 w-4" />
           </button>

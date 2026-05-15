@@ -22,7 +22,7 @@ export function ChatInput({ value, onChange, onSubmit, onStop, isLoading }: Chat
   }, [value]);
 
   return (
-    <div className="shrink-0 w-full border-t border-[rgba(255,255,255,0.06)] bg-background">
+    <div className="shrink-0 w-full border-t border-[rgba(255,255,255,0.06)] bg-background pb-[max(1rem,env(safe-area-inset-bottom))]">
       <div className="mx-auto w-full max-w-[720px] px-4 py-4 md:px-0">
         <form
           onSubmit={(e) => {

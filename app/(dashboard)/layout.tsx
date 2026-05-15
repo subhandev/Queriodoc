@@ -8,7 +8,9 @@ export default function DashboardLayout({
   return (
     <div className="min-h-screen bg-background">
       <DashboardNavbar />
-      <main className="mx-auto max-w-[1100px] px-8 py-10">{children}</main>
+      <main className="mx-auto max-w-[1100px] px-4 py-8 sm:px-6 sm:py-10 lg:px-8">
+        {children}
+      </main>
     </div>
   );
 }

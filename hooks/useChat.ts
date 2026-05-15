@@ -4,7 +4,7 @@ import { useAuth } from "@clerk/nextjs";
 import { useChat as useAIChat } from "@ai-sdk/react";
 import { DefaultChatTransport } from "ai";
 import { useCallback, useEffect, useMemo, useState } from "react";
-import type { MessageRow, QueriodocUIMessage, SourceChunkPreview } from "@/types";
+import type { MessageRow, QueriodocUIMessage } from "@/types";
 
 function rowToUIMessage(row: MessageRow): QueriodocUIMessage {
   const parts: QueriodocUIMessage["parts"] = [{ type: "text", text: row.content }];
@@ -41,6 +41,19 @@ export function useChat(documentId: string) {
     id: documentId,
     transport,
   });
+
+  const clearChatHistory = useCallback(async () => {
+    stop();
+    const res = await fetch(`/api/documents/${documentId}/messages`, {
+      method: "DELETE",
+      credentials: "include",
+    });
+    if (!res.ok) {
+      const text = await res.text();
+      throw new Error(text || "Failed to clear chat");
+    }
+    setMessages([]);
+  }, [documentId, setMessages, stop]);
 
   useEffect(() => {
     if (!isLoaded || !userId) {
@@ -115,5 +128,6 @@ export function useChat(documentId: string) {
     isLoading,
     historyLoaded,
     stop,
+    clearChatHistory,
   };
 }

@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useClerk, useUser } from "@clerk/nextjs";
 import {
   FileText,
@@ -10,6 +10,7 @@ import {
   PanelLeftClose,
   PanelLeftOpen,
   Plus,
+  UserRound,
   X,
 } from "lucide-react";
 import { ChatTypeBadge } from "@/components/chat/ChatTypeBadge";
@@ -33,8 +34,10 @@ export function ChatSidebar({
   onMobileOpenChange,
 }: ChatSidebarProps) {
   const [collapsed, setCollapsed] = useState(false);
+  const [accountMenuOpen, setAccountMenuOpen] = useState(false);
+  const accountMenuRef = useRef<HTMLDivElement>(null);
   const { user } = useUser();
-  const { signOut } = useClerk();
+  const { signOut, openUserProfile } = useClerk();
 
   const initials =
     user?.firstName && user?.lastName
@@ -43,6 +46,92 @@ export function ChatSidebar({
 
   const displayName =
     user?.fullName ?? user?.primaryEmailAddress?.emailAddress ?? "Account";
+
+  useEffect(() => {
+    if (!accountMenuOpen) {
+      return;
+    }
+    const onClick = (e: MouseEvent) => {
+      if (accountMenuRef.current && !accountMenuRef.current.contains(e.target as Node)) {
+        setAccountMenuOpen(false);
+      }
+    };
+    globalThis.document.addEventListener("mousedown", onClick);
+    return () => globalThis.document.removeEventListener("mousedown", onClick);
+  }, [accountMenuOpen]);
+
+  const avatarButton = (
+    <button
+      type="button"
+      onClick={() => setAccountMenuOpen((v) => !v)}
+      className={cn(
+        "relative inline-flex shrink-0 overflow-hidden rounded-full ring-1 ring-[rgba(255,255,255,0.12)] transition-opacity hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary",
+        collapsed ? "h-8 w-8" : "h-7 w-7",
+      )}
+      aria-expanded={accountMenuOpen}
+      aria-haspopup="menu"
+      aria-label="Account menu"
+    >
+      {user?.imageUrl ? (
+        // eslint-disable-next-line @next/next/no-img-element -- Clerk-hosted avatar URL
+        <img src={user.imageUrl} alt="" className="h-full w-full object-cover" />
+      ) : (
+        <span
+          className={cn(
+            "flex h-full w-full items-center justify-center bg-white/[0.06] text-[11px] font-semibold text-foreground",
+            collapsed && "text-[12px]",
+          )}
+        >
+          {initials}
+        </span>
+      )}
+    </button>
+  );
+
+  const accountDropdown = accountMenuOpen ? (
+    <div
+      className={cn(
+        "absolute z-50 mb-2 w-[min(15.5rem,calc(100vw-2rem))] overflow-hidden rounded-lg border border-[rgba(255,255,255,0.1)] bg-[#111114] py-1 shadow-xl",
+        collapsed ? "bottom-full left-1/2 -translate-x-1/2" : "bottom-full left-0",
+      )}
+      role="menu"
+    >
+      {!collapsed ? (
+        <div className="border-b border-[rgba(255,255,255,0.06)] px-3 py-2.5">
+          <p className="truncate text-[13px] font-medium text-foreground">{displayName}</p>
+          {user?.primaryEmailAddress?.emailAddress ? (
+            <p className="mt-0.5 truncate text-[11.5px] text-muted-foreground">
+              {user.primaryEmailAddress.emailAddress}
+            </p>
+          ) : null}
+        </div>
+      ) : null}
+      <button
+        type="button"
+        role="menuitem"
+        className="flex w-full items-center gap-2 px-3 py-2.5 text-left text-[13px] text-foreground transition-colors hover:bg-white/[0.04]"
+        onClick={() => {
+          setAccountMenuOpen(false);
+          openUserProfile();
+        }}
+      >
+        <UserRound size={15} className="shrink-0 text-muted-foreground" />
+        Manage account
+      </button>
+      <button
+        type="button"
+        role="menuitem"
+        className="flex w-full items-center gap-2 px-3 py-2.5 text-left text-[13px] text-[#F87171] transition-colors hover:bg-white/[0.04]"
+        onClick={() => {
+          setAccountMenuOpen(false);
+          void signOut({ redirectUrl: "/" });
+        }}
+      >
+        <LogOut size={15} className="shrink-0" />
+        Sign out
+      </button>
+    </div>
+  ) : null;
 
   return (
     <>
@@ -160,24 +249,24 @@ export function ChatSidebar({
             </Link>
             <div
               className={cn(
-                "flex items-center gap-2.5",
+                "relative flex items-center gap-2.5",
                 collapsed && "md:justify-center",
               )}
+              ref={accountMenuRef}
             >
-              <span className="inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-white/[0.06] text-[11px] font-semibold text-foreground">
-                {initials}
-              </span>
+              {accountDropdown}
+              {avatarButton}
               {!collapsed && (
                 <div className="flex min-w-0 flex-1 items-center justify-between gap-2">
                   <span className="truncate text-[12.5px] text-foreground">{displayName}</span>
                   <button
                     type="button"
-                    onClick={() => signOut({ redirectUrl: "/" })}
-                    className="inline-flex items-center gap-1 text-[11.5px] text-muted-foreground hover:text-foreground"
-                    aria-label="Sign out"
+                    onClick={() => setAccountMenuOpen((v) => !v)}
+                    className="inline-flex shrink-0 items-center gap-1 text-[11.5px] text-muted-foreground hover:text-foreground"
+                    aria-expanded={accountMenuOpen}
+                    aria-haspopup="menu"
                   >
-                    <LogOut size={12} />
-                    Sign out
+                    Menu
                   </button>
                 </div>
               )}

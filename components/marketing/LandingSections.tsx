@@ -12,10 +12,10 @@ import { HeroCtas } from "@/components/marketing/HeroCtas";
 
 function HeroMockup() {
   return (
-    <div className="relative mx-auto mt-16 w-full max-w-2xl">
+    <div className="relative mx-auto mt-12 w-full max-w-2xl sm:mt-16">
       <div
         aria-hidden
-        className="absolute -inset-x-10 -inset-y-6 -z-10 rounded-[28px] opacity-60 blur-3xl"
+        className="absolute max-sm:-inset-x-4 max-sm:-inset-y-4 -inset-x-10 -inset-y-6 -z-10 rounded-[28px] opacity-60 blur-3xl"
         style={{
           background:
             "radial-gradient(60% 60% at 50% 40%, rgba(124,109,250,0.35), transparent 70%)",
@@ -90,7 +90,7 @@ function HeroMockup() {
 
 export function Hero() {
   return (
-    <section className="relative overflow-hidden px-6 pt-20 pb-24 sm:pt-28">
+    <section className="relative overflow-hidden px-4 pt-16 pb-20 sm:px-6 sm:pt-28">
       <div
         aria-hidden
         className="pointer-events-none absolute inset-0 -z-10"
@@ -104,7 +104,7 @@ export function Hero() {
           <Sparkles className="h-3 w-3 text-primary" />
           Powered by RAG + GPT-4o
         </span>
-        <h1 className="mt-6 text-[44px] font-semibold tracking-tight text-foreground sm:text-[56px]">
+        <h1 className="mt-6 px-1 text-4xl font-semibold tracking-tight text-foreground sm:px-0 sm:text-5xl lg:text-[56px]">
           Ask anything.
           <br />
           <span className="text-muted-foreground">From any document.</span>
@@ -128,7 +128,7 @@ export function ProofBar() {
     "Technical manuals",
   ];
   return (
-    <section className="border-y border-border/60 bg-card/30 px-6 py-8">
+    <section className="border-y border-border/60 bg-card/30 px-4 py-8 sm:px-6">
       <div className="mx-auto flex max-w-5xl flex-wrap items-center justify-center gap-2.5">
         <span className="mr-2 text-[13px] text-muted-foreground">Trusted for</span>
         {tags.map((t) => (
@@ -163,7 +163,7 @@ export function Features() {
     },
   ];
   return (
-    <section className="px-6 py-24">
+    <section className="px-4 py-20 sm:px-6 sm:py-24">
       <div className="mx-auto max-w-5xl">
         <h2 className="text-center text-[32px] font-semibold tracking-tight text-foreground sm:text-[40px]">
           Everything you need to chat with your documents
@@ -206,7 +206,7 @@ export function HowItWorks() {
     },
   ];
   return (
-    <section id="how" className="border-t border-border/60 px-6 py-24">
+    <section id="how" className="border-t border-border/60 px-4 py-20 sm:px-6 sm:py-24">
       <div className="mx-auto max-w-5xl">
         <h2 className="text-center text-[32px] font-semibold tracking-tight text-foreground sm:text-[40px]">
           Up and running in 3 steps
@@ -242,15 +242,15 @@ export function HowItWorks() {
 
 export function CtaBanner() {
   return (
-    <section id="cta" className="px-6 py-20">
+    <section id="cta" className="px-4 py-16 sm:px-6 sm:py-20">
       <div
-        className="relative mx-auto max-w-5xl overflow-hidden rounded-2xl border border-primary/40 bg-card p-12 text-center"
+        className="relative mx-auto max-w-5xl overflow-hidden rounded-2xl border border-primary/40 bg-card p-7 text-center sm:p-10 md:p-12"
         style={{
           background:
             "radial-gradient(80% 120% at 50% 0%, rgba(124,109,250,0.18), rgba(22,22,26,1) 70%)",
         }}
       >
-        <h2 className="text-[30px] font-semibold tracking-tight text-foreground sm:text-[36px]">
+        <h2 className="text-2xl font-semibold tracking-tight text-foreground sm:text-[30px] lg:text-[36px]">
           Ready to talk to your documents?
         </h2>
         <p className="mx-auto mt-3 max-w-md text-[15px] text-muted-foreground">
@@ -269,7 +269,7 @@ export function CtaBanner() {
 
 export function Footer() {
   return (
-    <footer className="border-t border-border px-6 py-10">
+    <footer className="border-t border-border px-4 py-10 sm:px-6">
       <div className="mx-auto flex max-w-6xl flex-col items-start justify-between gap-6 sm:flex-row sm:items-center">
         <div>
           <Logo />

@@ -26,7 +26,7 @@ export function SourceChunks({ chunks }: SourceChunksProps) {
   const remaining = chunks.length - visibleCount;
 
   return (
-    <div className="mt-2 max-w-[90%]">
+    <div className="mt-2 w-full min-w-0 max-w-[min(92%,36rem)] sm:max-w-[90%]">
       <div className="flex flex-wrap items-center gap-1.5">
         <span className="inline-flex items-center gap-1 rounded-md border border-border bg-card px-2 py-1 text-[10.5px] text-muted-foreground">
           <FileText className="h-3 w-3" />

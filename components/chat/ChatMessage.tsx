@@ -47,7 +47,7 @@ export function ChatMessage({ message }: ChatMessageProps) {
   if (isUser) {
     return (
       <div className="group flex flex-col items-end">
-        <div className="max-w-[75%] min-w-0 rounded-[12px_12px_2px_12px] bg-primary px-3.5 py-2.5 text-[14px] leading-snug text-white">
+        <div className="max-w-[min(85%,28rem)] min-w-0 rounded-[12px_12px_2px_12px] bg-primary px-3.5 py-2.5 text-[14px] leading-snug text-white">
           <p className="whitespace-pre-wrap">{text}</p>
         </div>
         {timeLabel ? (
@@ -61,7 +61,7 @@ export function ChatMessage({ message }: ChatMessageProps) {
 
   return (
     <div className="group flex flex-col items-start">
-      <div className="max-w-[85%] min-w-0 rounded-[12px_12px_12px_2px] border border-border bg-secondary/60 px-4 py-3.5 text-[14px] leading-[1.7] text-foreground sm:max-w-[90%]">
+      <div className="max-w-[min(92%,36rem)] min-w-0 rounded-[12px_12px_12px_2px] border border-border bg-secondary/60 px-4 py-3.5 text-[14px] leading-[1.7] text-foreground sm:max-w-[90%]">
         <MarkdownMessage text={text} />
       </div>
       <SourceChunks chunks={sources} />

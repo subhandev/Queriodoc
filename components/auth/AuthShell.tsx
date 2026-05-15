@@ -11,9 +11,9 @@ interface AuthShellProps {
 
 export function AuthShell({ title, subtitle, children, footer }: AuthShellProps) {
   return (
-    <main className="flex min-h-screen flex-col items-center justify-center bg-background px-4 py-10">
+    <main className="flex min-h-screen flex-col items-center justify-center bg-background px-4 py-8 sm:py-10">
       <div className="w-full max-w-[420px]">
-        <div className="rounded-xl border border-border bg-card p-8 shadow-[0_1px_0_0_rgba(255,255,255,0.04)_inset]">
+        <div className="rounded-xl border border-border bg-card p-5 shadow-[0_1px_0_0_rgba(255,255,255,0.04)_inset] sm:p-8">
           <div className="flex flex-col items-center gap-5 text-center">
             <Logo />
             <div className="space-y-1.5">

@@ -122,6 +122,10 @@ export default function DocumentChatPage({ params }: PageProps) {
       documentId={documentId}
       document={doc}
       onOpenMenu={() => setMobileOpen(true)}
+      onChatCleared={() => {
+        void fetchDoc();
+        void refetch();
+      }}
     />,
   );
 }

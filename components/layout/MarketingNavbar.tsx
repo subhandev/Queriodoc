@@ -4,6 +4,7 @@ import Link from "next/link";
 import { SignedIn, SignedOut, UserButton } from "@clerk/nextjs";
 import { useEffect, useState } from "react";
 import { Logo } from "@/components/brand/Logo";
+import { clerkAppearance } from "@/lib/clerk-appearance";
 
 export function MarketingNavbar() {
   const [scrolled, setScrolled] = useState(false);
@@ -23,9 +24,9 @@ export function MarketingNavbar() {
           : "border-b border-transparent bg-transparent"
       }`}
     >
-      <nav className="mx-auto flex h-16 max-w-6xl items-center justify-between px-6">
-        <Logo />
-        <div className="flex items-center gap-2">
+      <nav className="mx-auto flex min-h-16 max-w-6xl flex-wrap items-center justify-between gap-x-4 gap-y-3 px-4 py-3 sm:h-16 sm:flex-nowrap sm:px-6 sm:py-0">
+        <Logo className="min-w-0 shrink-0" />
+        <div className="flex min-w-0 flex-1 items-center justify-end gap-2 sm:flex-none">
           <SignedOut>
             <Link
               href="/sign-in"
@@ -43,11 +44,12 @@ export function MarketingNavbar() {
           <SignedIn>
             <Link
               href="/documents"
-              className="inline-flex items-center rounded-lg bg-primary px-3.5 py-1.5 text-sm font-medium text-primary-foreground transition-colors duration-150 hover:bg-[var(--primary-hover)]"
+              className="inline-flex max-w-full items-center justify-center rounded-lg bg-primary px-3 py-1.5 text-sm font-medium text-primary-foreground transition-colors duration-150 hover:bg-[var(--primary-hover)] sm:px-3.5"
             >
-              My documents
+              <span className="truncate sm:hidden">Documents</span>
+              <span className="hidden sm:inline">My documents</span>
             </Link>
-            <UserButton afterSignOutUrl="/" />
+            <UserButton afterSignOutUrl="/" appearance={clerkAppearance} />
           </SignedIn>
         </div>
       </nav>
