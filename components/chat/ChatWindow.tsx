@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { Info, Menu, Trash2 } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import { ChatMessage } from "@/components/chat/ChatMessage";
 import { ChatInput } from "@/components/chat/ChatInput";
 import { ChatWelcome } from "@/components/chat/ChatWelcome";
@@ -28,7 +29,7 @@ function ChatHistorySkeleton() {
 }
 
 export function ChatWindow({ documentId, document, onOpenMenu }: ChatWindowProps) {
-  const threadRef = useRef<HTMLDivElement>(null);
+  const scrollRootRef = useRef<HTMLDivElement>(null);
   const [showInfo, setShowInfo] = useState(false);
   const {
     messages,
@@ -46,7 +47,9 @@ export function ChatWindow({ documentId, document, onOpenMenu }: ChatWindowProps
     isLoading && uiMessages.length > 0 && uiMessages[uiMessages.length - 1]?.role === "user";
 
   useEffect(() => {
-    const el = threadRef.current;
+    const el = scrollRootRef.current?.querySelector(
+      '[data-slot="scroll-area-viewport"]',
+    );
     if (!el) return;
     el.scrollTo({ top: el.scrollHeight, behavior: "smooth" });
   }, [messages, isLoading]);
@@ -128,20 +131,24 @@ export function ChatWindow({ documentId, document, onOpenMenu }: ChatWindowProps
         </>
       ) : null}
 
-      <div ref={threadRef} className="min-h-0 flex-1 overflow-y-auto overscroll-contain">
-        <div className="mx-auto w-full max-w-[720px] px-4 py-6 md:px-6">
-          {!historyLoaded ? (
-            <ChatHistorySkeleton />
-          ) : showEmpty ? (
-            <ChatWelcome documentName={document.name} onPick={setInput} />
-          ) : (
-            <div className="flex flex-col gap-5">
-              {uiMessages.map((m) => (
-                <ChatMessage key={m.id} message={m} />
-              ))}
-              {showTyping ? <ChatTyping /> : null}
+      <div className="mx-auto flex min-h-0 w-full max-w-[720px] flex-1 flex-col px-4 md:px-0">
+        <div ref={scrollRootRef} className="min-h-0 flex-1">
+          <ScrollArea className="h-full">
+            <div className="py-6">
+              {!historyLoaded ? (
+                <ChatHistorySkeleton />
+              ) : showEmpty ? (
+                <ChatWelcome documentName={document.name} onPick={setInput} />
+              ) : (
+                <div className="flex min-w-0 w-full flex-col gap-5">
+                  {uiMessages.map((m) => (
+                    <ChatMessage key={m.id} message={m} />
+                  ))}
+                  {showTyping ? <ChatTyping /> : null}
+                </div>
+              )}
             </div>
-          )}
+          </ScrollArea>
         </div>
       </div>
 

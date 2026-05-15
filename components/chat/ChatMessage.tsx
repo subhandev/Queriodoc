@@ -47,7 +47,7 @@ export function ChatMessage({ message }: ChatMessageProps) {
   if (isUser) {
     return (
       <div className="group flex flex-col items-end">
-        <div className="max-w-[75%] rounded-[12px_12px_2px_12px] bg-primary px-3.5 py-2.5 text-[14px] leading-snug text-white">
+        <div className="max-w-[75%] min-w-0 rounded-[12px_12px_2px_12px] bg-primary px-3.5 py-2.5 text-[14px] leading-snug text-white">
           <p className="whitespace-pre-wrap">{text}</p>
         </div>
         {timeLabel ? (
@@ -61,8 +61,8 @@ export function ChatMessage({ message }: ChatMessageProps) {
 
   return (
     <div className="group flex flex-col items-start">
-      <div className="max-w-[75%] rounded-[12px_12px_12px_2px] border border-[rgba(255,255,255,0.07)] bg-[#1E1E24] px-4 py-3 text-[14px] leading-[1.7] text-foreground">
-        <div className="max-w-none [&_code]:rounded [&_code]:bg-white/[0.06] [&_code]:px-1 [&_code]:py-0.5 [&_code]:text-[12.5px] [&_p]:my-1 [&_strong]:font-semibold">
+      <div className="max-w-[75%] min-w-0 rounded-[12px_12px_12px_2px] border border-[rgba(255,255,255,0.07)] bg-[#1E1E24] px-4 py-3 text-[14px] leading-[1.7] text-foreground">
+        <div className="max-w-none break-words [&_code]:rounded [&_code]:bg-white/[0.06] [&_code]:px-1 [&_code]:py-0.5 [&_code]:text-[12.5px] [&_p]:my-1 [&_pre]:max-w-full [&_pre]:overflow-x-auto [&_strong]:font-semibold">
           <ReactMarkdown>{text}</ReactMarkdown>
         </div>
       </div>

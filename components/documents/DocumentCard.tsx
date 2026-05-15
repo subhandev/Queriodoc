@@ -122,18 +122,20 @@ export function DocumentCard({ document, onDelete }: DocumentCardProps) {
           {document.name}
         </h3>
         <p className="mt-1 text-[13px] text-muted-foreground">Uploaded {uploadedAt}</p>
-        <p className="mt-1 inline-flex items-center gap-1.5 text-[13px] text-muted-foreground">
+        <p className="mt-2 inline-flex items-center gap-1.5 text-[13px] text-muted-foreground">
           <MessageCircle className="h-3.5 w-3.5" />
           {messageCount} {messageLabel}
         </p>
 
-        <div className="mt-auto border-t border-[rgba(255,255,255,0.05)] pt-4">
-          <Link
-            href={`/documents/${document.id}`}
-            className="inline-flex h-9 w-full items-center justify-center rounded-lg border border-border bg-transparent text-[13px] font-medium text-primary transition-colors duration-150 hover:bg-primary hover:text-primary-foreground"
-          >
-            Open chat
-          </Link>
+        <div className="mt-auto w-full">
+          <div className="mt-4 border-t border-[rgba(255,255,255,0.05)] pt-4">
+            <Link
+              href={`/documents/${document.id}`}
+              className="inline-flex h-9 w-full items-center justify-center rounded-lg border border-border bg-transparent text-[13px] font-medium text-primary transition-colors duration-150 hover:bg-primary hover:text-primary-foreground"
+            >
+              Open chat
+            </Link>
+          </div>
         </div>
       </div>
 

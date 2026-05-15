@@ -13,6 +13,7 @@ import {
   X,
 } from "lucide-react";
 import { ChatTypeBadge } from "@/components/chat/ChatTypeBadge";
+import { TruncatedText } from "@/components/ui/truncated-text";
 import { cn } from "@/lib/utils";
 import type { DocumentRow } from "@/types";
 
@@ -128,7 +129,9 @@ export function ChatSidebar({
                         <FileText size={15} className="shrink-0" />
                         {!collapsed && (
                           <>
-                            <span className="min-w-0 flex-1 truncate">{doc.name}</span>
+                            <TruncatedText className="min-w-0 flex-1">
+                              {doc.name}
+                            </TruncatedText>
                             {doc.status === "processing" ? (
                               <Loader2 className="size-3.5 shrink-0 animate-spin" />
                             ) : (

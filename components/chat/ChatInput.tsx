@@ -21,8 +21,8 @@ export function ChatInput({ value, onChange, onSubmit, isLoading }: ChatInputPro
   }, [value]);
 
   return (
-    <div className="shrink-0 border-t border-[rgba(255,255,255,0.06)] bg-background px-4 py-4 md:px-6">
-      <div className="mx-auto w-full max-w-[720px]">
+    <div className="shrink-0 w-full border-t border-[rgba(255,255,255,0.06)] bg-background">
+      <div className="mx-auto w-full max-w-[720px] px-4 py-4 md:px-0">
         <form
           onSubmit={(e) => {
             e.preventDefault();
