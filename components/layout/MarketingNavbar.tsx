@@ -1,10 +1,10 @@
 "use client";
 
 import Link from "next/link";
-import { SignedIn, SignedOut, UserButton } from "@clerk/nextjs";
+import { SignedIn, SignedOut } from "@clerk/nextjs";
 import { useEffect, useState } from "react";
 import { Logo } from "@/components/brand/Logo";
-import { clerkAppearance } from "@/lib/clerk-appearance";
+import { NavAccountMenu } from "@/components/layout/NavAccountMenu";
 
 export function MarketingNavbar() {
   const [scrolled, setScrolled] = useState(false);
@@ -49,7 +49,7 @@ export function MarketingNavbar() {
               <span className="truncate sm:hidden">Documents</span>
               <span className="hidden sm:inline">My documents</span>
             </Link>
-            <UserButton afterSignOutUrl="/" appearance={clerkAppearance} />
+            <NavAccountMenu />
           </SignedIn>
         </div>
       </nav>

@@ -1,9 +1,8 @@
 "use client";
 
-import { UserButton } from "@clerk/nextjs";
 import { useEffect, useState } from "react";
 import { Logo } from "@/components/brand/Logo";
-import { clerkAppearance } from "@/lib/clerk-appearance";
+import { NavAccountMenu } from "@/components/layout/NavAccountMenu";
 
 export function DashboardNavbar() {
   const [scrolled, setScrolled] = useState(false);
@@ -24,7 +23,7 @@ export function DashboardNavbar() {
     >
       <nav className="mx-auto flex min-h-14 max-w-[1100px] items-center justify-between gap-3 px-4 sm:h-16 sm:px-6 lg:px-8">
         <Logo href="/documents" />
-        <UserButton afterSignOutUrl="/" appearance={clerkAppearance} />
+        <NavAccountMenu />
       </nav>
     </header>
   );

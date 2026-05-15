@@ -1,6 +1,6 @@
 import type { Appearance } from "@clerk/types";
 
-/** Shared Clerk UI tokens so UserButton, UserProfile, and modals match Queriodoc. */
+/** Shared Clerk UI tokens for UserProfile, sign-in/up modals, etc. */
 export const clerkAppearance: Appearance = {
   variables: {
     colorPrimary: "#7c6dfa",
@@ -12,14 +12,6 @@ export const clerkAppearance: Appearance = {
     borderRadius: "0.75rem",
   },
   elements: {
-    userButtonPopoverCard:
-      "bg-[#111114] border border-[rgba(255,255,255,0.08)] shadow-2xl rounded-xl",
-    userButtonPopoverActionButton:
-      "text-foreground hover:bg-white/[0.06] rounded-lg transition-colors",
-    userButtonPopoverActionButtonText: "text-[13px]",
-    userButtonPopoverFooter: "hidden",
-    userPreviewMainIdentifier: "text-foreground",
-    userPreviewSecondaryIdentifier: "text-muted-foreground text-[12px]",
     modalContent: "bg-[#111114] border border-[rgba(255,255,255,0.08)]",
     card: "bg-[#111114] border border-[rgba(255,255,255,0.08)] shadow-xl",
     navbar: "bg-[#111114]",
