@@ -1,6 +1,9 @@
 import { auth } from "@clerk/nextjs/server";
 import { jsonError } from "@/lib/api/json";
-import { createAdminClient } from "@/lib/supabase/server";
+import {
+  createAdminClient,
+  formatPostgrestError,
+} from "@/lib/supabase/server";
 
 export const runtime = "nodejs";
 
@@ -29,45 +32,55 @@ async function removeUserStorageObjects(
 }
 
 export async function GET() {
-  const { userId } = await auth();
-  if (!userId) {
-    return jsonError("Unauthorized", 401);
+  try {
+    const { userId } = await auth();
+    if (!userId) {
+      return jsonError("Unauthorized", 401);
+    }
+
+    const supabase = createAdminClient();
+    const { data, error } = await supabase
+      .from("documents")
+      .select("*")
+      .eq("user_id", userId)
+      .order("created_at", { ascending: false });
+
+    if (error) {
+      return jsonError(formatPostgrestError(error), 500);
+    }
+
+    return Response.json(data ?? []);
+  } catch (e) {
+    const message = e instanceof Error ? e.message : "Internal server error";
+    return jsonError(message, 500);
   }
-
-  const supabase = createAdminClient();
-  const { data, error } = await supabase
-    .from("documents")
-    .select("*")
-    .eq("user_id", userId)
-    .order("created_at", { ascending: false });
-
-  if (error) {
-    return jsonError(error.message, 500);
-  }
-
-  return Response.json(data ?? []);
 }
 
 export async function DELETE() {
-  const { userId } = await auth();
-  if (!userId) {
-    return jsonError("Unauthorized", 401);
-  }
-
-  const supabase = createAdminClient();
-
   try {
-    await removeUserStorageObjects(supabase, userId);
+    const { userId } = await auth();
+    if (!userId) {
+      return jsonError("Unauthorized", 401);
+    }
+
+    const supabase = createAdminClient();
+
+    try {
+      await removeUserStorageObjects(supabase, userId);
+    } catch (e) {
+      const message = e instanceof Error ? e.message : "Storage delete failed";
+      return jsonError(message, 500);
+    }
+
+    const { error } = await supabase.from("documents").delete().eq("user_id", userId);
+
+    if (error) {
+      return jsonError(formatPostgrestError(error), 500);
+    }
+
+    return new Response(null, { status: 204 });
   } catch (e) {
-    const message = e instanceof Error ? e.message : "Storage delete failed";
+    const message = e instanceof Error ? e.message : "Internal server error";
     return jsonError(message, 500);
   }
-
-  const { error } = await supabase.from("documents").delete().eq("user_id", userId);
-
-  if (error) {
-    return jsonError(error.message, 500);
-  }
-
-  return new Response(null, { status: 204 });
 }

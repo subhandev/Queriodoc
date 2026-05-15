@@ -22,17 +22,31 @@ export function useUpload() {
       const res = await fetch("/api/ingest", {
         method: "POST",
         body: form,
+        credentials: "include",
       });
 
       setPhase("processing");
       setProgress(70);
 
-      if (!res.ok) {
-        const body = (await res.json()) as { error?: string };
-        throw new Error(body.error ?? "Upload failed");
+      const text = await res.text();
+      let parsed: unknown;
+      try {
+        parsed = text.trim() ? JSON.parse(text) : undefined;
+      } catch {
+        throw new Error(
+          res.ok ? "Invalid response from server." : `Upload failed (${res.status}).`,
+        );
       }
 
-      const data = (await res.json()) as { documentId: string; chunkCount: number };
+      if (!res.ok) {
+        const errObj = parsed as { error?: string } | undefined;
+        throw new Error(errObj?.error ?? "Upload failed");
+      }
+
+      const data = parsed as { documentId: string; chunkCount: number };
+      if (!data?.documentId) {
+        throw new Error("Invalid response from server.");
+      }
       setProgress(100);
       setPhase("ready");
       return data.documentId;

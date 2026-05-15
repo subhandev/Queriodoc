@@ -6,7 +6,12 @@ const isPublicRoute = createRouteMatcher([
   "/sign-up(.*)",
 ]);
 
+const isApiRoute = createRouteMatcher(["/api(.*)"]);
+
 export default clerkMiddleware((auth, req) => {
+  if (isApiRoute(req)) {
+    return;
+  }
   if (!isPublicRoute(req)) {
     auth().protect();
   }

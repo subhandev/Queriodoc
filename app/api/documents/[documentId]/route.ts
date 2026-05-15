@@ -1,6 +1,6 @@
 import { auth } from "@clerk/nextjs/server";
 import { jsonError } from "@/lib/api/json";
-import { createAdminClient } from "@/lib/supabase/server";
+import { createAdminClient, formatPostgrestError } from "@/lib/supabase/server";
 
 export const runtime = "nodejs";
 
@@ -23,7 +23,7 @@ export async function GET(_req: Request, context: RouteContext) {
     .maybeSingle();
 
   if (error) {
-    return jsonError(error.message, 500);
+    return jsonError(formatPostgrestError(error), 500);
   }
   if (!data) {
     return jsonError("Not found", 404);
@@ -49,7 +49,7 @@ export async function DELETE(_req: Request, context: RouteContext) {
     .maybeSingle();
 
   if (fetchErr) {
-    return jsonError(fetchErr.message, 500);
+    return jsonError(formatPostgrestError(fetchErr), 500);
   }
   if (!doc) {
     return jsonError("Not found", 404);
@@ -64,7 +64,7 @@ export async function DELETE(_req: Request, context: RouteContext) {
   const { error: delErr } = await supabase.from("documents").delete().eq("id", documentId);
 
   if (delErr) {
-    return jsonError(delErr.message, 500);
+    return jsonError(formatPostgrestError(delErr), 500);
   }
 
   return new Response(null, { status: 204 });
