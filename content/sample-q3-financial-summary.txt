@@ -66,6 +66,65 @@ Principal risks include:
 
 Mitigations include deeper vertical solutions, partner-led implementations, and a refreshed equity refresh program for critical technical staff.
 
+KEY PERFORMANCE INDICATORS (Q3 2025)
+
+The following KPI table summarizes quarterly performance versus prior year and internal plan:
+
+| Metric | Q3 2025 | Q3 2024 | YoY change | vs. plan |
+| Revenue | $42.1M | $35.5M | +18.4% | +3.9% |
+| Gross margin | 72.0% | 69.0% | +3.0 pts | +1.2 pts |
+| Operating margin | 16.2% | 13.7% | +2.5 pts | +0.8 pts |
+| Net revenue retention | 118% | 112% | +6 pts | +3 pts |
+| Enterprise ACV | $186K | $171K | +9% | +2% |
+| Free cash flow | $2.1M | $0.4M | +$1.7M | On target |
+| Headcount (FTE) | 412 | 368 | +12% | Planned |
+
+ARR ended the quarter at $168.4 million, up 19% year-over-year. Logo churn in enterprise remained below 4% annualized. SMB churn ticked up modestly to 11% annualized, attributed to seasonal trial drop-off rather than product dissatisfaction.
+
+ACME INSIGHTS 4.0 — PRODUCT DEEP DIVE
+
+Acme Insights 4.0 is the company’s flagship analytics workspace, released in July 2025. Core capabilities include collaborative dashboards with role-based sharing, natural-language query over governed datasets (English queries translated to validated SQL), row-level security policies synced from customer identity providers, and export controls for compliance teams (watermarked PDF/CSV, audit logs).
+
+The release also introduced “Scenario Studio,” allowing finance teams to model revenue sensitivities against pipeline data, and “Executive Briefings,” mobile-optimized narrative summaries generated from live metrics. Early adopters in financial services reported 30% faster time-to-insight in pilot surveys; healthcare customers highlighted HIPAA-ready deployment templates.
+
+Roadmap items for Q4 include federated queries across Snowflake and BigQuery without data duplication, and an AI-assisted anomaly detection module for subscription metrics. Product management estimates Insights 4.0 attach rate of 78% on new enterprise deals versus 61% on renewals of legacy bundles.
+
+CUSTOMER SUCCESS STORIES
+
+Flagship retail customer (name withheld): Expanded deployment from 2,800 to 4,200 seats in Q3 after rolling out inventory forecasting dashboards. Contract value increased $1.2M annually. Customer cited 22% reduction in stockouts in pilot regions.
+
+Regional health network: Completed go-live on predictive staffing models using Acme’s forecasting module across 14 hospitals. Implementation took 11 weeks with partner support. Expected labor cost savings of 4–6% in nursing units over the next four quarters.
+
+European insurance group: Signed three-year enterprise agreement worth $4.8M TCV, including governance modules and dedicated success manager. Migration from legacy BI completed in phased waves through December.
+
+PUBLIC SECTOR AND PARTNERSHIPS
+
+Public sector revenue reached $3.8 million (9% of total), growing 14% year-over-year. Two state-level analytics modernization projects converted from pipeline in Q3; an additional five RFPs remain active for Q4 and Q1 2026. Federal opportunities are tracked but not yet material to revenue.
+
+Partnership revenue through systems integrators grew 31% year-over-year, representing 8% of new ARR. Co-marketing with three SI partners generated 42 qualified enterprise opportunities in the quarter.
+
+TALENT AND OPERATIONS
+
+Headcount ended at 412 full-time employees, up from 368 a year ago. Net adds of 18 in Q3 were concentrated in engineering (11), customer success (4), and sales (3). Voluntary attrition was 9.2% annualized, improved from 11.1% in Q2 after the equity refresh program for critical technical staff.
+
+Office footprint remains hybrid-first; facilities costs declined 6% year-over-year as subleases were consolidated. The company maintains no long-term debt and continues to fund operations from cash flow and existing reserves.
+
+OUTLOOK AND RISKS (EXPANDED)
+
+Q4 2025 guidance (internal, not external guidance): revenue of $43.5M to $44.5M, implying full-year revenue growth of approximately 17–19% year-over-year. Gross margin expected to remain between 71% and 73%. Operating margin targeted at 16.5% to 17.0% assuming controlled hiring.
+
+Principal risks and mitigations:
+
+1. Competitive pressure from larger platform vendors bundling analytics at aggressive price points. Mitigation: deeper vertical solutions in healthcare and financial services, plus partner-led implementations that reduce time-to-value.
+
+2. Macro uncertainty affecting SMB and public-sector budget cycles. Mitigation: flexible payment terms for SMB annual contracts and emphasis on ROI case studies in public RFP responses.
+
+3. Talent retention in specialized machine-learning and data engineering roles. Mitigation: refreshed equity program, internal AI guild, and conference sponsorship budget increased 40% for Q4.
+
+4. Model quality and hallucination risk in natural-language query features. Mitigation: human-in-the-loop review for new semantic models, query explainability UI, and strict grounding to customer datasets only.
+
+5. Security incidents or compliance audit findings. Mitigation: SOC 2 Type II certification maintained, quarterly penetration tests, and dedicated security engineering squad of six FTEs.
+
 CONCLUSION
 
-Q3 2025 demonstrated durable growth, improving margins, and strong enterprise demand. Acme Analytics remains well positioned to invest in product innovation while maintaining a path to sustained profitability. This document is synthetic demo data for product evaluation purposes only.
+Q3 2025 demonstrated durable growth, improving margins, and strong enterprise demand. Acme Analytics remains well positioned to invest in product innovation while maintaining a path to sustained profitability. Management will discuss segment trends, product adoption, and risk factors on the internal business review scheduled for October. This document is synthetic demo data for product evaluation purposes only.

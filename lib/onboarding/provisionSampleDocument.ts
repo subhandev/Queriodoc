@@ -2,7 +2,8 @@ import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import { randomUUID } from "node:crypto";
 import { createAdminClient } from "@/lib/supabase/server";
-import { SAMPLE_DOCUMENT_NAME } from "@/lib/onboarding/copy";
+import { SAMPLE_CONTENT_VERSION, SAMPLE_DOCUMENT_NAME } from "@/lib/onboarding/copy";
+import { refreshSampleChunksIfStale } from "@/lib/onboarding/refreshSampleChunks";
 import type { SampleDocumentPayload } from "@/lib/onboarding/sample-document.types";
 
 function loadSamplePayload(): SampleDocumentPayload {
@@ -40,12 +41,17 @@ export async function provisionSampleDocument(
   if ((count ?? 0) > 0) {
     const { data: existing } = await supabase
       .from("documents")
-      .select("id")
+      .select("id, sample_content_version")
       .eq("user_id", userId)
       .eq("is_sample", true)
       .maybeSingle();
 
     if (existing?.id) {
+      await refreshSampleChunksIfStale(
+        userId,
+        existing.id as string,
+        existing.sample_content_version as number | null | undefined,
+      );
       return { documentId: existing.id as string, created: false };
     }
 
@@ -88,6 +94,7 @@ export async function provisionSampleDocument(
     status: "ready",
     chunk_count: payload.chunks.length,
     is_sample: true,
+    sample_content_version: SAMPLE_CONTENT_VERSION,
   });
 
   if (insertError) {

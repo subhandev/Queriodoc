@@ -84,7 +84,7 @@ export async function POST(req: Request) {
 
   const { data: doc, error: docError } = await supabase
     .from("documents")
-    .select("id")
+    .select("id, is_sample")
     .eq("id", documentId)
     .eq("user_id", userId)
     .maybeSingle();
@@ -136,7 +136,8 @@ export async function POST(req: Request) {
     return jsonError(message, 500);
   }
 
-  const systemPrompt = buildPrompt(matched, history, userText);
+  const isSample = doc.is_sample === true;
+  const systemPrompt = buildPrompt(matched, history, userText, { isSample });
 
   const { error: userInsErr } = await supabase.from("messages").insert({
     document_id: documentId,
@@ -175,6 +176,7 @@ export async function POST(req: Request) {
         user_id: userId,
         role: "assistant",
         content: assistantText,
+        sources: { chunks: matched },
       });
     },
   });

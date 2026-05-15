@@ -43,7 +43,7 @@ export function MarketingNavbar() {
           <SignedIn>
             <Link
               href="/documents"
-              className="rounded-md px-3 py-1.5 text-sm text-muted-foreground transition-colors duration-150 hover:text-foreground"
+              className="inline-flex items-center rounded-lg bg-primary px-3.5 py-1.5 text-sm font-medium text-primary-foreground transition-colors duration-150 hover:bg-[var(--primary-hover)]"
             >
               My documents
             </Link>

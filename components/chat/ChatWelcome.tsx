@@ -1,7 +1,12 @@
 "use client";
 
 import { MessageCircle } from "lucide-react";
-import { SAMPLE_SUGGESTED_QUESTIONS, sampleChatWelcome } from "@/lib/onboarding/copy";
+import { buttonVariants } from "@/components/ui/button";
+import {
+  SAMPLE_SUGGESTED_QUESTIONS,
+  sampleChatWelcome,
+} from "@/lib/onboarding/copy";
+import { cn } from "@/lib/utils";
 
 const DEFAULT_SUGGESTED = [
   "Summarise this document",
@@ -9,37 +14,62 @@ const DEFAULT_SUGGESTED = [
   "Who is this document for?",
 ];
 
+type SuggestedQuestion = {
+  label: string;
+  hint?: string;
+};
+
 type ChatWelcomeProps = {
   documentName: string;
   isSample?: boolean;
-  onPick: (question: string) => void;
+  onSendQuestion: (question: string) => void;
+  disabled?: boolean;
 };
 
 function SuggestedChips({
   questions,
-  onPick,
+  onSendQuestion,
+  disabled,
 }: {
-  questions: string[];
-  onPick: (question: string) => void;
+  questions: SuggestedQuestion[];
+  onSendQuestion: (question: string) => void;
+  disabled?: boolean;
 }) {
   return (
-    <div className="mt-5 flex flex-wrap justify-center gap-2">
+    <div className="mt-5 flex flex-col items-center gap-2">
       {questions.map((q) => (
         <button
-          key={q}
+          key={q.label}
           type="button"
-          onClick={() => onPick(q)}
-          className="inline-flex items-center rounded-full border border-[rgba(255,255,255,0.1)] bg-transparent px-3 py-1.5 text-[12.5px] text-muted-foreground transition-colors hover:border-primary/40 hover:bg-white/[0.03] hover:text-foreground"
+          disabled={disabled}
+          onClick={() => onSendQuestion(q.label)}
+          className={cn(
+            buttonVariants({ variant: "outline", size: "sm" }),
+            "h-auto max-w-full flex-col items-start gap-0.5 px-3 py-2 text-left",
+          )}
         >
-          {q}
+          <span className="text-[13px]">{q.label}</span>
+          {q.hint ? (
+            <span className="text-[11px] font-normal text-muted-foreground">{q.hint}</span>
+          ) : null}
         </button>
       ))}
     </div>
   );
 }
 
-export function ChatWelcome({ documentName, isSample = false, onPick }: ChatWelcomeProps) {
-  const suggested = isSample ? [...SAMPLE_SUGGESTED_QUESTIONS] : DEFAULT_SUGGESTED;
+export function ChatWelcome({
+  documentName,
+  isSample = false,
+  onSendQuestion,
+  disabled = false,
+}: ChatWelcomeProps) {
+  const suggested: SuggestedQuestion[] = isSample
+    ? SAMPLE_SUGGESTED_QUESTIONS.map((q) => ({
+        label: q.label,
+        hint: q.hint,
+      }))
+    : DEFAULT_SUGGESTED.map((label) => ({ label }));
 
   if (isSample) {
     return (
@@ -50,7 +80,11 @@ export function ChatWelcome({ documentName, isSample = false, onPick }: ChatWelc
         <h2 className="text-[16px] font-semibold text-foreground">{sampleChatWelcome.headline}</h2>
         <p className="mt-2 text-[13.5px] leading-relaxed text-muted-foreground">{sampleChatWelcome.body}</p>
         <p className="mt-3 text-[12px] text-muted-foreground/90">{sampleChatWelcome.trustLine}</p>
-        <SuggestedChips questions={suggested} onPick={onPick} />
+        <SuggestedChips
+          questions={suggested}
+          onSendQuestion={onSendQuestion}
+          disabled={disabled}
+        />
       </div>
     );
   }
@@ -66,7 +100,11 @@ export function ChatWelcome({ documentName, isSample = false, onPick }: ChatWelc
       <p className="mt-1.5 text-[13.5px] text-muted-foreground">
         Ask me anything about this document — I&apos;ll answer using only what&apos;s in it.
       </p>
-      <SuggestedChips questions={suggested} onPick={onPick} />
+      <SuggestedChips
+        questions={suggested}
+        onSendQuestion={onSendQuestion}
+        disabled={disabled}
+      />
     </div>
   );
 }

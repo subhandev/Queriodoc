@@ -7,10 +7,11 @@ type ChatInputProps = {
   value: string;
   onChange: (e: React.ChangeEvent<HTMLTextAreaElement>) => void;
   onSubmit: () => void;
+  onStop?: () => void;
   isLoading: boolean;
 };
 
-export function ChatInput({ value, onChange, onSubmit, isLoading }: ChatInputProps) {
+export function ChatInput({ value, onChange, onSubmit, onStop, isLoading }: ChatInputProps) {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   useEffect(() => {
@@ -45,14 +46,25 @@ export function ChatInput({ value, onChange, onSubmit, isLoading }: ChatInputPro
             placeholder="Ask a question about this document..."
             className="block max-h-[140px] min-h-[36px] flex-1 resize-none bg-transparent py-1.5 text-[14px] leading-6 text-foreground placeholder:text-muted-foreground/70 outline-none disabled:opacity-60"
           />
-          <button
-            type="submit"
-            disabled={isLoading || !value.trim()}
-            aria-label="Send message"
-            className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground transition-all hover:bg-[var(--primary-hover)] disabled:bg-white/10 disabled:text-muted-foreground"
-          >
-            <ArrowUp size={16} />
-          </button>
+          {isLoading && onStop ? (
+            <button
+              type="button"
+              onClick={onStop}
+              aria-label="Stop generating"
+              className="inline-flex h-8 shrink-0 items-center justify-center rounded-full border border-border bg-card px-3 text-[12px] font-medium text-foreground transition-colors hover:bg-muted"
+            >
+              Stop
+            </button>
+          ) : (
+            <button
+              type="submit"
+              disabled={isLoading || !value.trim()}
+              aria-label="Send message"
+              className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground transition-all hover:bg-[var(--primary-hover)] disabled:bg-white/10 disabled:text-muted-foreground"
+            >
+              <ArrowUp size={16} />
+            </button>
+          )}
         </form>
         <p className="mt-2.5 text-center text-[11px] text-muted-foreground">
           Powered by GPT-4o · Answers grounded in your document

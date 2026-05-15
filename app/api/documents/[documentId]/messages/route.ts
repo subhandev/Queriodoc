@@ -31,7 +31,7 @@ export async function GET(_req: Request, context: RouteContext) {
 
   const { data, error } = await supabase
     .from("messages")
-    .select("id, document_id, user_id, role, content, created_at")
+    .select("id, document_id, user_id, role, content, sources, created_at")
     .eq("document_id", documentId)
     .eq("user_id", userId)
     .order("created_at", { ascending: true });

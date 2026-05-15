@@ -8,6 +8,7 @@ import {
   Sparkles,
 } from "lucide-react";
 import { Logo } from "@/components/brand/Logo";
+import { HeroCtas } from "@/components/marketing/HeroCtas";
 
 function HeroMockup() {
   return (
@@ -112,20 +113,7 @@ export function Hero() {
           Upload a PDF, Word doc, or text file — and get instant, accurate answers grounded in
           your content. No hallucinations. Just your document.
         </p>
-        <div className="mt-9 flex flex-wrap items-center justify-center gap-3">
-          <Link
-            href="/sign-up"
-            className="inline-flex items-center gap-1.5 rounded-lg bg-primary px-5 py-2.5 text-sm font-medium text-primary-foreground transition-colors duration-150 hover:bg-[var(--primary-hover)]"
-          >
-            Get started free <ArrowRight className="h-4 w-4" />
-          </Link>
-          <a
-            href="#how"
-            className="inline-flex items-center rounded-lg border border-border bg-transparent px-5 py-2.5 text-sm font-medium text-foreground transition-colors duration-150 hover:bg-card"
-          >
-            See how it works
-          </a>
-        </div>
+        <HeroCtas />
         <HeroMockup />
       </div>
     </section>

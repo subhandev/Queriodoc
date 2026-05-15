@@ -33,8 +33,8 @@ function loadEnvLocal() {
   }
 }
 
-const CHUNK_WORDS = 500;
-const OVERLAP_WORDS = 50;
+const CHUNK_WORDS = 280;
+const OVERLAP_WORDS = 40;
 const MIN_CHUNK_WORDS = 50;
 const STEP = CHUNK_WORDS - OVERLAP_WORDS;
 

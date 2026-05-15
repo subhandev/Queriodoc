@@ -4,14 +4,22 @@ import { useAuth } from "@clerk/nextjs";
 import { useChat as useAIChat } from "@ai-sdk/react";
 import { DefaultChatTransport } from "ai";
 import { useCallback, useEffect, useMemo, useState } from "react";
-import type { MessageRow, QueriodocUIMessage } from "@/types";
+import type { MessageRow, QueriodocUIMessage, SourceChunkPreview } from "@/types";
 
 function rowToUIMessage(row: MessageRow): QueriodocUIMessage {
+  const parts: QueriodocUIMessage["parts"] = [{ type: "text", text: row.content }];
+  if (row.sources?.chunks && row.sources.chunks.length > 0) {
+    parts.push({
+      type: "data-sources",
+      id: "retrieval",
+      data: { chunks: row.sources.chunks },
+    });
+  }
   return {
     id: row.id,
     role: row.role,
     metadata: { createdAt: row.created_at },
-    parts: [{ type: "text", text: row.content }],
+    parts,
   };
 }
 
@@ -75,20 +83,27 @@ export function useChat(documentId: string) {
     [],
   );
 
-  const handleSubmit = useCallback(
-    (e?: { preventDefault?: () => void }) => {
-      e?.preventDefault?.();
-      const trimmed = input.trim();
-      if (!trimmed || status === "streaming" || status === "submitted") {
+  const isLoading = status === "streaming" || status === "submitted";
+
+  const submitQuestion = useCallback(
+    (text: string) => {
+      const trimmed = text.trim();
+      if (!trimmed || isLoading) {
         return;
       }
       void sendMessage({ text: trimmed });
       setInput("");
     },
-    [input, sendMessage, status],
+    [isLoading, sendMessage],
   );
 
-  const isLoading = status === "streaming" || status === "submitted";
+  const handleSubmit = useCallback(
+    (e?: { preventDefault?: () => void }) => {
+      e?.preventDefault?.();
+      submitQuestion(input);
+    },
+    [input, submitQuestion],
+  );
 
   return {
     messages,
@@ -96,6 +111,7 @@ export function useChat(documentId: string) {
     setInput,
     handleInputChange,
     handleSubmit,
+    submitQuestion,
     isLoading,
     historyLoaded,
     stop,

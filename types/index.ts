@@ -17,8 +17,18 @@ export type DocumentRow = {
   status: DocumentStatus;
   chunk_count: number | null;
   is_sample?: boolean;
+  sample_content_version?: number | null;
   message_count?: number;
   created_at: string;
+};
+
+export type SourceChunkPreview = {
+  chunk_index: number;
+  content: string;
+};
+
+export type MessageSources = {
+  chunks: SourceChunkPreview[];
 };
 
 export type MessageRow = {
@@ -27,6 +37,7 @@ export type MessageRow = {
   user_id: string;
   role: MessageRole;
   content: string;
+  sources?: MessageSources | null;
   created_at: string;
 };
 
@@ -34,11 +45,6 @@ export type MatchChunkRow = {
   content: string;
   chunk_index: number;
   similarity: number;
-};
-
-export type SourceChunkPreview = {
-  chunk_index: number;
-  content: string;
 };
 
 export type QueriodocUIMessage = UIMessage<

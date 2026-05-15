@@ -28,23 +28,40 @@ function ChatHistorySkeleton() {
   );
 }
 
+function textFromMessage(message: QueriodocUIMessage): string {
+  return message.parts
+    .filter(
+      (p): p is { type: "text"; text: string } =>
+        p.type === "text" && "text" in p,
+    )
+    .map((p) => p.text)
+    .join("");
+}
+
 export function ChatWindow({ documentId, document, onOpenMenu }: ChatWindowProps) {
   const scrollRootRef = useRef<HTMLDivElement>(null);
   const [showInfo, setShowInfo] = useState(false);
   const {
     messages,
     input,
-    setInput,
     handleInputChange,
     handleSubmit,
+    submitQuestion,
     isLoading,
     historyLoaded,
+    stop,
   } = useChat(documentId);
 
   const uiMessages = messages as QueriodocUIMessage[];
   const showEmpty = historyLoaded && uiMessages.length === 0;
+  const lastMessage = uiMessages[uiMessages.length - 1];
+  const lastAssistantText =
+    lastMessage?.role === "assistant" ? textFromMessage(lastMessage) : "";
   const showTyping =
-    isLoading && uiMessages.length > 0 && uiMessages[uiMessages.length - 1]?.role === "user";
+    isLoading &&
+    (uiMessages.length === 0 ||
+      lastMessage?.role === "user" ||
+      (lastMessage?.role === "assistant" && !lastAssistantText.trim()));
 
   useEffect(() => {
     const el = scrollRootRef.current?.querySelector(
@@ -141,7 +158,8 @@ export function ChatWindow({ documentId, document, onOpenMenu }: ChatWindowProps
                 <ChatWelcome
                   documentName={document.name}
                   isSample={document.is_sample === true}
-                  onPick={setInput}
+                  onSendQuestion={submitQuestion}
+                  disabled={isLoading}
                 />
               ) : (
                 <div className="flex min-w-0 w-full flex-col gap-5">
@@ -160,6 +178,7 @@ export function ChatWindow({ documentId, document, onOpenMenu }: ChatWindowProps
         value={input}
         onChange={handleInputChange}
         onSubmit={() => handleSubmit()}
+        onStop={stop}
         isLoading={isLoading || !historyLoaded}
       />
     </main>
