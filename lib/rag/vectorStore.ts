@@ -24,14 +24,18 @@ export async function storeChunks(
   }
 }
 
-const DEFAULT_SIMILARITY_THRESHOLD = 0.5;
+/** Prefer chunks above this score; tuned for recall on short/vague queries. */
+export const SIMILARITY_THRESHOLD = 0.35;
 
-export async function similaritySearch(
+/** When nothing passes the primary threshold, still return the best top-K matches. */
+const FALLBACK_SIMILARITY_THRESHOLD = 0;
+
+async function matchChunks(
   documentId: string,
   queryEmbedding: number[],
-  topK: number = 5,
-  matchThreshold: number = DEFAULT_SIMILARITY_THRESHOLD,
-): Promise<{ content: string; chunk_index: number }[]> {
+  topK: number,
+  matchThreshold: number,
+): Promise<MatchChunkRow[]> {
   const supabase = createAdminClient();
   const { data, error } = await supabase.rpc("match_chunks", {
     query_embedding: queryEmbedding,
@@ -44,6 +48,30 @@ export async function similaritySearch(
     throw new Error(error.message);
   }
 
-  const rows = (data ?? []) as MatchChunkRow[];
+  return (data ?? []) as MatchChunkRow[];
+}
+
+export async function similaritySearch(
+  documentId: string,
+  queryEmbedding: number[],
+  topK: number = 5,
+  matchThreshold: number = SIMILARITY_THRESHOLD,
+): Promise<{ content: string; chunk_index: number }[]> {
+  let rows = await matchChunks(
+    documentId,
+    queryEmbedding,
+    topK,
+    matchThreshold,
+  );
+
+  if (rows.length === 0 && matchThreshold > FALLBACK_SIMILARITY_THRESHOLD) {
+    rows = await matchChunks(
+      documentId,
+      queryEmbedding,
+      topK,
+      FALLBACK_SIMILARITY_THRESHOLD,
+    );
+  }
+
   return rows.map(({ content, chunk_index }) => ({ content, chunk_index }));
 }

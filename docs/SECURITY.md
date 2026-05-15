@@ -26,7 +26,7 @@ The current app does **not** use the browser Supabase client; RLS is defense-in-
 ## Vector search
 
 - `match_chunks` is scoped by `document_id`. The chat API verifies document ownership before calling the RPC.
-- Similarity results below the threshold (default `0.5`) are excluded (migration `008`).
+- Similarity results below the threshold (default `0.35`) are excluded unless the fallback path returns the best top-K matches (migration `008`).
 
 ## Secrets on the client
 

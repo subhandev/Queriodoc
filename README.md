@@ -68,7 +68,7 @@
 
 1. **Upload** — `POST /api/ingest` or `POST /api/upload` stores the file in Supabase Storage and creates a `processing` document row.
 2. **Process** — `POST /api/documents/[id]/process` parses, chunks, embeds, and marks the document `ready` (client polls until complete).
-3. **Chat** — `POST /api/chat` embeds the question, calls `match_chunks` (similarity threshold 0.5), and streams GPT-4o with a strict context-only prompt.
+3. **Chat** — `POST /api/chat` embeds the question, calls `match_chunks` (similarity threshold 0.35, with top-K fallback), and streams GPT-4o with a strict context-only prompt.
 
 ## API routes
 
