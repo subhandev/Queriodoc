@@ -41,7 +41,7 @@ export async function GET() {
     const supabase = createAdminClient();
     const { data, error } = await supabase
       .from("documents")
-      .select("*")
+      .select("*, messages(count)")
       .eq("user_id", userId)
       .order("created_at", { ascending: false });
 
@@ -49,7 +49,17 @@ export async function GET() {
       return jsonError(formatPostgrestError(error), 500);
     }
 
-    return Response.json(data ?? []);
+    const rows = (data ?? []).map((row) => {
+      const { messages, ...doc } = row as typeof row & {
+        messages: { count: number }[];
+      };
+      return {
+        ...doc,
+        message_count: messages?.[0]?.count ?? 0,
+      };
+    });
+
+    return Response.json(rows);
   } catch (e) {
     const message = e instanceof Error ? e.message : "Internal server error";
     return jsonError(message, 500);

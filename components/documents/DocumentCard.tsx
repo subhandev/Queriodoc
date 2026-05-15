@@ -63,6 +63,8 @@ export function DocumentCard({ document, onDelete }: DocumentCardProps) {
     day: "numeric",
     year: "numeric",
   });
+  const messageCount = document.message_count ?? 0;
+  const messageLabel = messageCount === 1 ? "message" : "messages";
 
   const handleDelete = async () => {
     setDeleting(true);
@@ -122,7 +124,7 @@ export function DocumentCard({ document, onDelete }: DocumentCardProps) {
         <p className="mt-1 text-[13px] text-muted-foreground">Uploaded {uploadedAt}</p>
         <p className="mt-1 inline-flex items-center gap-1.5 text-[13px] text-muted-foreground">
           <MessageCircle className="h-3.5 w-3.5" />
-          {document.chunk_count ?? 0} chunks
+          {messageCount} {messageLabel}
         </p>
 
         <div className="mt-auto border-t border-[rgba(255,255,255,0.05)] pt-4">

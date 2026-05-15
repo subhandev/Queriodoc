@@ -69,7 +69,7 @@ export function useChat(documentId: string) {
   }, [documentId, userId, isLoaded, setMessages]);
 
   const handleInputChange = useCallback(
-    (e: React.ChangeEvent<HTMLInputElement>) => {
+    (e: React.ChangeEvent<HTMLTextAreaElement>) => {
       setInput(e.target.value);
     },
     [],
@@ -93,6 +93,7 @@ export function useChat(documentId: string) {
   return {
     messages,
     input,
+    setInput,
     handleInputChange,
     handleSubmit,
     isLoading,

@@ -1,7 +1,6 @@
 "use client";
 
-import Link from "next/link";
-import { FileText, Inbox, UploadCloud } from "lucide-react";
+import { FileText, Inbox } from "lucide-react";
 import { DocumentCard } from "@/components/documents/DocumentCard";
 import type { DocumentRow } from "@/types";
 
@@ -54,16 +53,9 @@ export function DocumentList({
       <div className="flex flex-col items-center justify-center py-24 text-center">
         <Inbox className="h-12 w-12 text-muted-foreground" strokeWidth={1.5} />
         <h2 className="mt-5 text-[18px] font-medium text-foreground">No documents yet</h2>
-        <p className="mt-1.5 text-[14px] text-muted-foreground">
-          Upload your first document to get started.
+        <p className="mt-1.5 max-w-sm text-[14px] text-muted-foreground">
+          Drag and drop a file into the area above, or click it to browse.
         </p>
-        <Link
-          href="/documents#upload"
-          className="mt-6 inline-flex items-center gap-1.5 rounded-lg bg-primary px-4 py-2 text-[14px] font-medium text-primary-foreground transition-colors duration-150 hover:bg-[var(--primary-hover)]"
-        >
-          <UploadCloud className="h-4 w-4" />
-          Upload a document
-        </Link>
       </div>
     );
   }

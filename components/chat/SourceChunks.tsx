@@ -1,21 +1,12 @@
 "use client";
 
-import {
-  Collapsible,
-  CollapsibleContent,
-  CollapsibleTrigger,
-} from "@/components/ui/collapsible";
-import { buttonVariants } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
-import type { SourceChunkPreview } from "@/types";
-import { ChevronDown } from "lucide-react";
+import { BookOpen } from "lucide-react";
 import { useState } from "react";
+import type { SourceChunkPreview } from "@/types";
 
 type SourceChunksProps = {
   chunks: SourceChunkPreview[];
 };
-
-const PREVIEW_LEN = 180;
 
 export function SourceChunks({ chunks }: SourceChunksProps) {
   const [open, setOpen] = useState(false);
@@ -25,30 +16,33 @@ export function SourceChunks({ chunks }: SourceChunksProps) {
   }
 
   return (
-    <Collapsible open={open} onOpenChange={setOpen} className="mt-2">
-      <CollapsibleTrigger
-        className={cn(
-          buttonVariants({ variant: "ghost", size: "sm" }),
-          "h-8 gap-1 px-2 text-xs",
-        )}
+    <div className="mt-2 max-w-[75%]">
+      <button
+        type="button"
+        onClick={() => setOpen((v) => !v)}
+        className="inline-flex items-center gap-1.5 rounded-full border border-[rgba(255,255,255,0.1)] bg-transparent px-2.5 py-1 text-[11.5px] text-muted-foreground transition-colors hover:border-primary/40 hover:text-foreground"
       >
-          <ChevronDown
-            className={`size-4 transition-transform ${open ? "rotate-180" : ""}`}
-          />
-          Sources ({chunks.length} chunks)
-      </CollapsibleTrigger>
-      <CollapsibleContent className="space-y-2 rounded-lg border border-border bg-muted/30 p-3 text-xs">
-        {chunks.map((c) => (
-          <div key={c.chunk_index}>
-            <p className="font-medium text-muted-foreground">Chunk #{c.chunk_index}</p>
-            <p className="mt-0.5 text-foreground/90">
-              {c.content.length > PREVIEW_LEN
-                ? `${c.content.slice(0, PREVIEW_LEN)}…`
-                : c.content}
-            </p>
-          </div>
-        ))}
-      </CollapsibleContent>
-    </Collapsible>
+        <BookOpen size={11} />
+        Sources ({chunks.length})
+      </button>
+      {open ? (
+        <div className="mt-2 grid gap-2 sm:grid-cols-2">
+          {chunks.map((c) => (
+            <div
+              key={c.chunk_index}
+              title={c.content}
+              className="rounded-lg border border-[rgba(255,255,255,0.07)] bg-card px-3 py-2.5 transition-colors hover:border-[rgba(255,255,255,0.18)]"
+            >
+              <div className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
+                Chunk {c.chunk_index}
+              </div>
+              <p className="mt-1 line-clamp-2 text-[12.5px] leading-snug text-muted-foreground">
+                {c.content}
+              </p>
+            </div>
+          ))}
+        </div>
+      ) : null}
+    </div>
   );
 }

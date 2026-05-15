@@ -36,7 +36,7 @@ export default function DocumentsLibraryPage() {
         </div>
       </div>
 
-      <div id="upload" className="mt-8 scroll-mt-24">
+      <div className="mt-8">
         <UploadZone
           onSuccess={async (documentId) => {
             await refetch();

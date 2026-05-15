@@ -3,11 +3,12 @@ import { cn } from "@/lib/utils";
 
 type LogoProps = {
   className?: string;
+  href?: string;
 };
 
-export function Logo({ className }: LogoProps) {
+export function Logo({ className, href = "/" }: LogoProps) {
   return (
-    <Link href="/" className={cn("inline-flex items-center gap-2", className)}>
+    <Link href={href} className={cn("inline-flex items-center gap-2", className)}>
       <span className="relative inline-flex h-2.5 w-2.5">
         <span className="absolute inset-0 rounded-full bg-primary" />
         <span className="absolute inset-0 rounded-full bg-primary opacity-70 blur-[6px]" />

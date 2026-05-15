@@ -1,7 +1,6 @@
 "use client";
 
 import { useCallback, useRef, useState } from "react";
-import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { useUpload } from "@/hooks/useUpload";
 import { UploadProgress } from "./UploadProgress";
@@ -29,32 +28,43 @@ function validateFile(file: File): string | null {
 
 export function UploadZone({ onSuccess, className }: UploadZoneProps) {
   const { upload, isUploading, progress, error, phase } = useUpload();
-  const [selected, setSelected] = useState<File | null>(null);
+  const [activeFile, setActiveFile] = useState<File | null>(null);
   const [localError, setLocalError] = useState<string | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
-  const onFile = useCallback((file: File | undefined) => {
-    setLocalError(null);
-    if (!file) {
-      setSelected(null);
-      return;
-    }
-    const err = validateFile(file);
-    if (err) {
-      setSelected(null);
-      setLocalError(err);
-      return;
-    }
-    setSelected(file);
-  }, []);
+  const startUpload = useCallback(
+    async (file: File) => {
+      if (isUploading) {
+        return;
+      }
+      setLocalError(null);
+      const err = validateFile(file);
+      if (err) {
+        setLocalError(err);
+        return;
+      }
+      setActiveFile(file);
+      try {
+        const id = await upload(file);
+        onSuccess(id);
+      } catch {
+        /* error surfaced via hook */
+      } finally {
+        setActiveFile(null);
+      }
+    },
+    [isUploading, upload, onSuccess],
+  );
 
   const handleDrop = useCallback(
     (e: React.DragEvent) => {
       e.preventDefault();
       const file = e.dataTransfer.files[0];
-      onFile(file);
+      if (file) {
+        void startUpload(file);
+      }
     },
-    [onFile],
+    [startUpload],
   );
 
   const handleDragOver = (e: React.DragEvent) => {
@@ -63,20 +73,9 @@ export function UploadZone({ onSuccess, className }: UploadZoneProps) {
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-    onFile(file);
     e.target.value = "";
-  };
-
-  const handleSubmit = async () => {
-    if (!selected) {
-      return;
-    }
-    try {
-      const id = await upload(selected);
-      onSuccess(id);
-      setSelected(null);
-    } catch {
-      /* error surfaced via hook */
+    if (file) {
+      void startUpload(file);
     }
   };
 
@@ -95,14 +94,16 @@ export function UploadZone({ onSuccess, className }: UploadZoneProps) {
         }}
         onDrop={handleDrop}
         onDragOver={handleDragOver}
-        onClick={() => inputRef.current?.click()}
+        onClick={() => !isUploading && inputRef.current?.click()}
         className={cn(
           "flex cursor-pointer flex-col items-center justify-center rounded-xl border border-dashed border-border bg-card/40 px-6 py-10 text-center transition hover:border-primary/40 hover:bg-card/60",
           isUploading && "pointer-events-none opacity-70",
         )}
       >
         <p className="text-sm font-medium text-foreground">
-          Drag and drop a document here, or click to browse
+          {isUploading
+            ? "Uploading your document…"
+            : "Drag and drop a document here, or click to browse"}
         </p>
         <p className="mt-1 text-xs text-muted-foreground">
           PDF, DOCX, or TXT — up to 10MB
@@ -112,27 +113,17 @@ export function UploadZone({ onSuccess, className }: UploadZoneProps) {
           type="file"
           accept={ACCEPT}
           className="hidden"
+          disabled={isUploading}
           onChange={handleChange}
         />
       </div>
 
-      {selected && (
-        <div className="flex flex-wrap items-center justify-between gap-2 rounded-lg border border-border bg-card px-4 py-3 text-sm">
-          <div>
-            <p className="font-medium">{selected.name}</p>
-            <p className="text-muted-foreground">
-              {(selected.size / 1024).toFixed(1)} KB
-            </p>
-          </div>
-          <Button
-            type="button"
-            size="sm"
-            disabled={isUploading}
-            onClick={handleSubmit}
-          >
-            Upload and process
-          </Button>
-        </div>
+      {activeFile && isUploading && (
+        <p className="text-sm text-muted-foreground">
+          <span className="font-medium text-foreground">{activeFile.name}</span>
+          {" · "}
+          {(activeFile.size / 1024).toFixed(1)} KB
+        </p>
       )}
 
       {displayError && (

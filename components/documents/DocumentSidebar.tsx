@@ -17,7 +17,7 @@ export function DocumentSidebar({
   isLoading,
 }: DocumentSidebarProps) {
   return (
-    <aside className="hidden w-56 shrink-0 flex-col border-r border-border bg-card lg:flex">
+    <aside className="hidden h-full min-h-0 w-56 shrink-0 flex-col border-r border-border bg-card lg:flex">
       <div className="border-b border-border px-3 py-3">
         <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
           Documents
@@ -60,7 +60,7 @@ export function DocumentSidebar({
           href="/documents"
           className="block rounded-md px-2 py-2 text-xs text-muted-foreground hover:bg-white/[0.04] hover:text-foreground"
         >
-          Upload & manage →
+          All documents →
         </Link>
       </div>
     </aside>
