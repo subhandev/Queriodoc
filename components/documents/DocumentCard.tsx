@@ -152,9 +152,6 @@ export function DocumentCard({ document, onDelete }: DocumentCardProps) {
       <p className="mt-1 text-[13px] text-muted-foreground">
         {isSample ? sampleCard.subtitle : `Uploaded ${uploadedAt}`}
       </p>
-      {isSample ? (
-        <p className="mt-1 text-[12px] text-muted-foreground/80">{sampleCard.helper}</p>
-      ) : null}
       <p className="mt-2 inline-flex items-center gap-1.5 text-[13px] text-muted-foreground">
         <MessageCircle className="h-3.5 w-3.5" />
         {messageCount} {messageLabel}

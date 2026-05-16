@@ -36,7 +36,7 @@ function SuggestedChips({
   disabled?: boolean;
 }) {
   return (
-    <div className="mt-5 flex flex-col items-center gap-2">
+    <div className="mt-5 flex w-full flex-col items-center gap-2 sm:mt-6">
       {questions.map((q) => (
         <button
           key={q.label}
@@ -45,12 +45,18 @@ function SuggestedChips({
           onClick={() => onSendQuestion(q.label)}
           className={cn(
             buttonVariants({ variant: "outline", size: "sm" }),
-            "h-auto max-w-full flex-col items-start gap-0.5 px-3 py-2 text-left",
+            "h-auto min-h-0 w-full max-w-md rounded-xl px-3 py-2 text-left font-normal shadow-none",
+            "flex-col items-start justify-start gap-0.5 border-white/10 hover:border-white/[0.14]",
+            "whitespace-normal text-pretty",
           )}
         >
-          <span className="text-[13px]">{q.label}</span>
+          <span className="w-full break-words text-[13px] leading-snug text-foreground">
+            {q.label}
+          </span>
           {q.hint ? (
-            <span className="text-[11px] font-normal text-muted-foreground">{q.hint}</span>
+            <span className="w-full break-words text-[11px] font-normal leading-normal text-muted-foreground">
+              {q.hint}
+            </span>
           ) : null}
         </button>
       ))}
@@ -77,9 +83,15 @@ export function ChatWelcome({
         <div className="mx-auto mb-3 inline-flex h-10 w-10 items-center justify-center rounded-full bg-[rgba(124,109,250,0.12)] text-primary">
           <MessageCircle size={20} />
         </div>
-        <h2 className="text-[16px] font-semibold text-foreground">{sampleChatWelcome.headline}</h2>
-        <p className="mt-2 text-[13.5px] leading-relaxed text-muted-foreground">{sampleChatWelcome.body}</p>
-        <p className="mt-3 text-[12px] text-muted-foreground/90">{sampleChatWelcome.trustLine}</p>
+        <h2 className="text-balance text-[16px] font-semibold leading-snug text-foreground">
+          {sampleChatWelcome.headline}
+        </h2>
+        <p className="mt-2 text-[13.5px] leading-relaxed text-muted-foreground">
+          {sampleChatWelcome.body}
+        </p>
+        <p className="mt-3 text-[12px] leading-normal text-muted-foreground/90">
+          {sampleChatWelcome.trustLine}
+        </p>
         <SuggestedChips
           questions={suggested}
           onSendQuestion={onSendQuestion}
@@ -94,7 +106,7 @@ export function ChatWelcome({
       <div className="mx-auto mb-3 inline-flex h-10 w-10 items-center justify-center rounded-full bg-[rgba(124,109,250,0.12)] text-primary">
         <MessageCircle size={20} />
       </div>
-      <h2 className="text-[16px] font-semibold text-foreground">
+      <h2 className="text-balance text-[16px] font-semibold leading-snug text-foreground">
         Hi! I&apos;ve read {documentName}.
       </h2>
       <p className="mt-1.5 text-[13.5px] text-muted-foreground">

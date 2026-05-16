@@ -5,20 +5,20 @@ export const SAMPLE_CONTENT_VERSION = 2;
 
 export const SAMPLE_SUGGESTED_QUESTIONS = [
   {
-    label: "Give me a full Q3 overview: revenue, margins, segments, and cash position",
-    hint: "Uses multiple sections",
+    label: "Summarize Q3 revenue, margins, key segments, and cash",
+    hint: "Pulls from several sections of the report",
   },
   {
-    label: "Compare enterprise, SMB, and public sector — revenue share and YoY growth",
-    hint: "Segment breakdown",
+    label: "Compare enterprise, SMB, and public sector performance",
+    hint: "Revenue mix and year-over-year growth",
   },
   {
-    label: "List all principal risks and management's mitigation strategies",
-    hint: "Risks & outlook",
+    label: "Summarize major risks and management mitigation strategies",
+    hint: "Principal risks and management responses",
   },
   {
-    label: "Walk through operating expenses, profitability trends, and Q4 outlook",
-    hint: "Financial depth",
+    label: "What's the outlook on costs, margins, and Q4?",
+    hint: "Operating expenses and profitability trends",
   },
 ] as const;
 
@@ -43,7 +43,6 @@ export const seedingCopy = {
 export const sampleCard = {
   badge: "Sample",
   subtitle: "Ready to chat · Synthetic demo data",
-  helper: "Click anywhere on the card to start chatting",
 } as const;
 
 export const emptyLibrary = {
@@ -53,8 +52,8 @@ export const emptyLibrary = {
 
 export const sampleChatWelcome = {
   headline: "Your sample report is ready",
-  body: "This is a synthetic Q3 financial summary with demo data — perfect for trying Queriodoc. Pick a starter question below to see rich, sourced answers. When you're done exploring, upload your own file from the sidebar.",
-  trustLine: "Demo data only · Your uploads are never shared",
+  body: "This is a synthetic Q3 financial summary with demo data — Ask anything or pick a starter question below to see rich, sourced answers.",
+  trustLine: "Your uploads remain private",
 } as const;
 
 export const CLERK_METADATA_OPENED_KEY = "onboardingSampleOpenedAt";

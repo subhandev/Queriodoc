@@ -150,7 +150,7 @@ export function ChatWindow({ documentId, document, onOpenMenu, onChatCleared }: 
               {clearError}
             </p>
           ) : null}
-          <DialogFooter className="border-0 bg-transparent p-0 sm:justify-end">
+          <DialogFooter className="border-0 bg-transparent sm:justify-end">
             <Button
               type="button"
               variant="outline"

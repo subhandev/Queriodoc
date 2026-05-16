@@ -91,13 +91,13 @@ export function ChatSidebar({
   const accountDropdown = accountMenuOpen ? (
     <div
       className={cn(
-        "absolute z-50 mb-2 w-[min(15.5rem,calc(100vw-2rem))] overflow-hidden rounded-lg border border-[rgba(255,255,255,0.1)] bg-[#111114] py-1 shadow-xl",
+        "absolute z-50 mb-2 w-[10.5rem] max-w-[calc(100vw-1.5rem)] overflow-hidden rounded-lg border border-[rgba(255,255,255,0.1)] bg-[#111114] py-0.5 shadow-xl",
         collapsed ? "bottom-full left-1/2 -translate-x-1/2" : "bottom-full left-0",
       )}
       role="menu"
     >
       {!collapsed ? (
-        <div className="border-b border-[rgba(255,255,255,0.06)] px-3 py-2.5">
+        <div className="border-b border-[rgba(255,255,255,0.06)] px-2.5 py-2">
           <p className="truncate text-[13px] font-medium text-foreground">{displayName}</p>
           {user?.primaryEmailAddress?.emailAddress ? (
             <p className="mt-0.5 truncate text-[11.5px] text-muted-foreground">
@@ -109,7 +109,7 @@ export function ChatSidebar({
       <button
         type="button"
         role="menuitem"
-        className="flex w-full items-center gap-2 px-3 py-2.5 text-left text-[13px] text-foreground transition-colors hover:bg-white/[0.04]"
+        className="flex w-full items-center gap-2 px-2.5 py-2 text-left text-[13px] text-foreground transition-colors hover:bg-white/[0.04]"
         onClick={() => {
           setAccountMenuOpen(false);
           openUserProfile();
@@ -121,7 +121,7 @@ export function ChatSidebar({
       <button
         type="button"
         role="menuitem"
-        className="flex w-full items-center gap-2 px-3 py-2.5 text-left text-[13px] text-[#F87171] transition-colors hover:bg-white/[0.04]"
+        className="flex w-full items-center gap-2 px-2.5 py-2 text-left text-[13px] text-[#F87171] transition-colors hover:bg-white/[0.04]"
         onClick={() => {
           setAccountMenuOpen(false);
           void signOut({ redirectUrl: "/" });
