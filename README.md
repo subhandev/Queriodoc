@@ -53,14 +53,14 @@ npm install
 
 ### 2. Environment variables
 
-Copy [`.env.example`](.env.example) to `.env.local` and fill in values from your Clerk, Supabase, and OpenAI dashboards.
+Copy [`.env.example`](.env.example) to `.env.local` and fill in secret values from your Clerk, Supabase, and OpenAI dashboards. Clerk sign-in/up redirect URLs are pre-filled for this app’s routes.
 
-| Variable | Purpose |
-|----------|---------|
-| `NEXT_PUBLIC_CLERK_*`, `CLERK_SECRET_KEY` | Authentication |
-| `NEXT_PUBLIC_SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY` | Database + storage (server) |
-| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Optional; unused by current UI (API-only access) |
-| `OPENAI_API_KEY` | Embeddings + chat |
+| Variable | Required | Purpose |
+|----------|----------|---------|
+| `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY`, `CLERK_SECRET_KEY` | Yes | Authentication |
+| `NEXT_PUBLIC_SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY` | Yes | Database + storage (server APIs) |
+| `OPENAI_API_KEY` | Yes | Embeddings + chat |
+| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | No | Direct browser Supabase client (unused today) |
 
 ### 3. Database and storage
 
@@ -127,8 +127,6 @@ All routes require Clerk authentication (`401` if unauthenticated).
 | `DELETE` | `/api/documents/[documentId]/messages` | Clear chat for a document |
 | `POST` | `/api/chat` | RAG chat (streaming UI message response) |
 | `POST` | `/api/onboarding/sample` | Provision demo sample document for new users |
-
-Example Bruno requests live in [`bruno/queriodoc/`](bruno/queriodoc/). Copy [`bruno/environments/local.bru.example`](bruno/environments/local.bru.example) and set your Clerk session cookie for local testing.
 
 ## Project structure
 
