@@ -18,12 +18,22 @@ export async function refreshSampleChunksIfStale(
   documentId: string,
   currentVersion: number | null | undefined,
 ): Promise<boolean> {
-  if (currentVersion === SAMPLE_CONTENT_VERSION) {
+  const supabase = createAdminClient();
+  const { count, error: countError } = await supabase
+    .from("chunks")
+    .select("id", { count: "exact", head: true })
+    .eq("document_id", documentId);
+
+  if (countError) {
+    throw new Error(countError.message);
+  }
+
+  const hasChunks = (count ?? 0) > 0;
+  if (currentVersion === SAMPLE_CONTENT_VERSION && hasChunks) {
     return false;
   }
 
   const payload = loadSamplePayload();
-  const supabase = createAdminClient();
 
   const { error: deleteError } = await supabase
     .from("chunks")

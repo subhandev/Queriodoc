@@ -2,13 +2,8 @@
 
 import { FileText } from "lucide-react";
 import { useState } from "react";
+import { sourceExcerpt, stripSourceBoilerplate } from "@/lib/rag/sourceExcerpt";
 import type { SourceChunkPreview } from "@/types";
-
-function excerpt(content: string, max = 42): string {
-  const trimmed = content.replace(/\s+/g, " ").trim();
-  if (trimmed.length <= max) return trimmed;
-  return `${trimmed.slice(0, max).trim()}…`;
-}
 
 type SourceChunksProps = {
   chunks: SourceChunkPreview[];
@@ -37,10 +32,10 @@ export function SourceChunks({ chunks }: SourceChunksProps) {
             key={c.chunk_index}
             type="button"
             onClick={() => setExpanded((v) => !v)}
-            title={c.content}
+            title={stripSourceBoilerplate(c.content)}
             className="max-w-[200px] truncate rounded-md border border-border bg-card px-2 py-1 text-[10.5px] text-muted-foreground transition-colors hover:border-primary/40 hover:text-foreground"
           >
-            {excerpt(c.content)}
+            {sourceExcerpt(c.content)}
           </button>
         ))}
         {remaining > 0 ? (
@@ -66,14 +61,14 @@ export function SourceChunks({ chunks }: SourceChunksProps) {
           {chunks.map((c) => (
             <div
               key={c.chunk_index}
-              title={c.content}
+              title={stripSourceBoilerplate(c.content)}
               className="rounded-lg border border-border bg-card px-3 py-2.5 transition-colors hover:border-primary/30"
             >
               <div className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
-                Excerpt {c.chunk_index + 1}
+                {sourceExcerpt(c.content)}
               </div>
               <p className="mt-1 line-clamp-4 text-[12.5px] leading-snug text-muted-foreground">
-                {c.content}
+                {stripSourceBoilerplate(c.content)}
               </p>
             </div>
           ))}

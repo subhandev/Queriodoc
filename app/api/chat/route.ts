@@ -8,6 +8,7 @@ import {
 } from "ai";
 import { jsonError } from "@/lib/api/json";
 import { getOpenAI } from "@/lib/openai/client";
+import { buildEmbeddingInput } from "@/lib/rag/embeddingQuery";
 import { buildPrompt } from "@/lib/rag/promptBuilder";
 import { similaritySearch } from "@/lib/rag/vectorStore";
 import { createAdminClient } from "@/lib/supabase/server";
@@ -112,11 +113,13 @@ export async function POST(req: Request) {
       content: row.content as string,
     }));
 
+  const embeddingInput = buildEmbeddingInput(userText);
+
   let queryEmbedding: number[];
   try {
     const emb = await getOpenAI().embeddings.create({
       model: "text-embedding-3-small",
-      input: userText,
+      input: embeddingInput,
     });
     const v = emb.data[0]?.embedding;
     if (!v) {

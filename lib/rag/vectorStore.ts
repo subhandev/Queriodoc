@@ -1,3 +1,4 @@
+import { cosineSimilarity, parseEmbedding } from "@/lib/rag/cosineSimilarity";
 import { createAdminClient } from "@/lib/supabase/server";
 import type { MatchChunkRow } from "@/types";
 
@@ -51,6 +52,48 @@ async function matchChunks(
   return (data ?? []) as MatchChunkRow[];
 }
 
+/**
+ * Exact cosine ranking in app code. Used when match_chunks returns nothing
+ * (broken IVFFlat on small corpora) or as a safety net.
+ */
+async function matchChunksExact(
+  documentId: string,
+  queryEmbedding: number[],
+  topK: number,
+  matchThreshold: number,
+): Promise<MatchChunkRow[]> {
+  const supabase = createAdminClient();
+  const { data, error } = await supabase
+    .from("chunks")
+    .select("content, chunk_index, embedding")
+    .eq("document_id", documentId);
+
+  if (error) {
+    throw new Error(error.message);
+  }
+  if (!data?.length) {
+    return [];
+  }
+
+  const scored = data.map((row) => ({
+    content: row.content as string,
+    chunk_index: row.chunk_index as number,
+    similarity: cosineSimilarity(
+      queryEmbedding,
+      parseEmbedding(row.embedding),
+    ),
+  }));
+
+  scored.sort((a, b) => b.similarity - a.similarity);
+
+  const aboveThreshold =
+    matchThreshold > 0
+      ? scored.filter((row) => row.similarity >= matchThreshold)
+      : scored;
+
+  return (aboveThreshold.length > 0 ? aboveThreshold : scored).slice(0, topK);
+}
+
 export async function similaritySearch(
   documentId: string,
   queryEmbedding: number[],
@@ -71,6 +114,23 @@ export async function similaritySearch(
       topK,
       FALLBACK_SIMILARITY_THRESHOLD,
     );
+  }
+
+  if (rows.length === 0) {
+    rows = await matchChunksExact(
+      documentId,
+      queryEmbedding,
+      topK,
+      matchThreshold,
+    );
+    if (rows.length === 0 && matchThreshold > FALLBACK_SIMILARITY_THRESHOLD) {
+      rows = await matchChunksExact(
+        documentId,
+        queryEmbedding,
+        topK,
+        FALLBACK_SIMILARITY_THRESHOLD,
+      );
+    }
   }
 
   return rows.map(({ content, chunk_index }) => ({ content, chunk_index }));

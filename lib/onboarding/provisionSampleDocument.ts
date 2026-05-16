@@ -85,9 +85,11 @@ export async function provisionSampleDocument(
     }
 
     if (sampleDocId) {
-      if (sampleVersionTracked) {
-        await refreshSampleChunksIfStale(userId, sampleDocId, sampleContentVersion);
-      }
+      await refreshSampleChunksIfStale(
+        userId,
+        sampleDocId,
+        sampleVersionTracked ? sampleContentVersion : null,
+      );
       return { documentId: sampleDocId, created: false };
     }
 
