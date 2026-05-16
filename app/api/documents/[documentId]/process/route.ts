@@ -19,6 +19,7 @@ export async function POST(_req: Request, context: RouteContext) {
     const { chunkCount } = await processDocument(documentId, userId);
     return Response.json({ documentId, status: "ready", chunkCount });
   } catch (e) {
+    console.error("[documents/process]", documentId, e);
     const message = e instanceof Error ? e.message : "Processing failed";
     return jsonError(message, 500);
   }
