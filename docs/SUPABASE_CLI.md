@@ -19,8 +19,8 @@ This opens a browser to authenticate with Supabase. When it succeeds, the CLI st
 From the project root:
 
 ```bash
-cd /Users/subhan/Work/Queriodoc
-supabase link --project-ref rzbmrmlkivcbdthujccj
+cd /path/to/Queriodoc
+supabase link --project-ref <your-project-ref>
 ```
 
 Use the **project ref** from your dashboard URL or from `NEXT_PUBLIC_SUPABASE_URL` (`https://<project-ref>.supabase.co`).
@@ -35,7 +35,7 @@ This creates `supabase/.temp/project-ref` (gitignored) so the CLI knows which re
 supabase db push
 ```
 
-Applies any migration in `supabase/migrations/` that is not yet recorded on the remote database (`001` through `009`).
+Applies any migration in `supabase/migrations/` that is not yet recorded on the remote database (`001` through `013`).
 
 Confirm:
 

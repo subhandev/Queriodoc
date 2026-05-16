@@ -73,7 +73,7 @@ for (const key of optional) {
 }
 
 console.log("\nDatabase:");
-console.log("  Apply migrations in supabase/migrations/ (001–009) via Supabase SQL or CLI.");
+console.log("  Apply migrations in supabase/migrations/ (001–013) via Supabase SQL or CLI.");
 console.log("  Migration 007 creates the private documents storage bucket.");
 
 if (failed) {

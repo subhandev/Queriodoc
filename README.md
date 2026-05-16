@@ -1,107 +1,169 @@
 # Queriodoc
 
-**Chat with your documents. Powered by RAG.** Upload PDFs, Word files, or plain text, then ask questions and get streaming answers grounded in your own content.
+**Chat with your documents.** Upload PDFs, Word files, or plain text, ask questions, and get streaming answers grounded in your content — with source citations from the original file.
 
-![Screenshot placeholder](https://via.placeholder.com/1200x630/f4f4f5/171717?text=Queriodoc+screenshot)
+**Live demo:** [queriodoc.vercel.app](https://queriodoc.vercel.app)
+
+## Features
+
+- **Multi-format upload** — PDF, `.docx`, and `.txt` via drag-and-drop or file picker
+- **RAG pipeline** — Parse → chunk → embed (`text-embedding-3-small`) → pgvector similarity search → streamed answers (`gpt-4o`)
+- **Source citations** — Assistant messages store matched chunk excerpts for transparency
+- **Per-document chat** — Isolated threads with persisted history
+- **Sample onboarding** — New users get a demo “Q3 Financial Summary” document to try chat before uploading
+- **Auth** — Clerk sign-in/sign-up with protected dashboard and API routes
+
+## How it works
+
+```
+Upload → Store (Supabase Storage) → Process (chunk + embed) → Chat (retrieve + stream)
+```
+
+1. **Upload** — `POST /api/ingest` (or `/api/upload`) saves the file to the private `documents` bucket and creates a `processing` row.
+2. **Process** — `POST /api/documents/[documentId]/process` extracts text, chunks it, embeds, and marks the document `ready`. The client polls until complete.
+3. **Chat** — `POST /api/chat` embeds the question, runs `match_chunks` (threshold `0.35`, with top-K fallback), and streams a context-only reply via the Vercel AI SDK.
 
 ## Tech stack
 
-| Layer        | Technology |
-|-------------|------------|
-| Frontend    | Next.js 14 (App Router), TypeScript, Tailwind CSS, shadcn/ui |
-| Auth        | Clerk |
-| Database    | Supabase (PostgreSQL + pgvector) |
-| Storage     | Supabase Storage (`documents` bucket, private) |
-| Embeddings  | OpenAI `text-embedding-3-small` |
-| Chat model  | OpenAI `gpt-4o` via Vercel AI SDK (`streamText`, UI message stream) |
-| Deployment  | Vercel |
+| Layer | Technology |
+|-------|------------|
+| Frontend | Next.js 14 (App Router), React 18, TypeScript, Tailwind CSS, shadcn/ui |
+| Auth | [Clerk](https://clerk.com) |
+| Database | [Supabase](https://supabase.com) — PostgreSQL + pgvector |
+| Storage | Supabase Storage (`documents` bucket, private, per-user paths) |
+| Embeddings | OpenAI `text-embedding-3-small` |
+| Chat | OpenAI `gpt-4o` via [Vercel AI SDK](https://sdk.vercel.ai) (`streamText`, UI message stream) |
+| Deployment | [Vercel](https://vercel.com) |
+
+## Prerequisites
+
+- **Node.js** ≥ 20.16 ([`package.json`](package.json) `engines`)
+- Accounts: [Clerk](https://dashboard.clerk.com), [Supabase](https://supabase.com/dashboard), [OpenAI](https://platform.openai.com/api-keys)
+- **Supabase CLI** (recommended) — [install guide](https://supabase.com/docs/guides/cli/getting-started)
 
 ## Local setup
 
-1. **Clone the repository**
+### 1. Clone and install
 
-   ```bash
-   git clone <your-repo-url>
-   cd queriodoc
-   ```
+```bash
+git clone https://github.com/subhandev/Queriodoc.git
+cd Queriodoc
+npm install
+```
 
-2. **Install dependencies**
+### 2. Environment variables
 
-   ```bash
-   npm install
-   ```
+Copy [`.env.example`](.env.example) to `.env.local` and fill in values from your Clerk, Supabase, and OpenAI dashboards.
 
-3. **Environment variables**
+| Variable | Purpose |
+|----------|---------|
+| `NEXT_PUBLIC_CLERK_*`, `CLERK_SECRET_KEY` | Authentication |
+| `NEXT_PUBLIC_SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY` | Database + storage (server) |
+| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Optional; unused by current UI (API-only access) |
+| `OPENAI_API_KEY` | Embeddings + chat |
 
-   Copy [`.env.example`](.env.example) to `.env.local` and fill in values from the Clerk, Supabase, and OpenAI dashboards.
+### 3. Database and storage
 
-4. **Supabase**
+Apply **all** migrations in [`supabase/migrations/`](supabase/migrations/) (`001`–`013`).
 
-   **Recommended (CLI):** See [`docs/SUPABASE_CLI.md`](docs/SUPABASE_CLI.md).
+**Recommended (CLI):** see [`docs/SUPABASE_CLI.md`](docs/SUPABASE_CLI.md).
 
-   ```bash
-   supabase login
-   supabase link --project-ref <your-project-ref>
-   npm run db:push
-   ```
+```bash
+supabase login
+supabase link --project-ref <your-project-ref>
+npm run db:push
+```
 
-   **Alternative:** Run SQL migrations manually in the Supabase SQL editor (`001`–`009` in [`supabase/migrations/`](supabase/migrations/)).
+**Alternative:** run each migration file in order in the Supabase SQL editor.
 
-   Migration `007_storage_bucket.sql` creates the private **`documents`** storage bucket.
-   - Optional: configure **Clerk** as a Supabase third-party auth provider and JWT template `supabase` for direct browser queries (see [`docs/SECURITY.md`](docs/SECURITY.md)). Chat history uses `/api/documents/[id]/messages` and does not require this.
+Notable migrations:
 
-5. **Verify environment**
+| Migration | Purpose |
+|-----------|---------|
+| `001`–`005` | pgvector, documents, chunks, messages, `match_chunks` RPC |
+| `006`–`009` | Clerk RLS, storage bucket, threshold search, chunk RLS |
+| `010` | Grants for `service_role` (used by API routes) |
+| `011`–`012` | Sample documents, message `sources`, sample version tracking |
+| `013` | Drop legacy IVFFlat index on chunks |
 
-   ```bash
-   npm run verify:setup
-   ```
+Migration `007` creates the private **`documents`** storage bucket.
 
-6. **Run the dev server**
+Optional: configure Clerk as a Supabase third-party auth provider for direct browser queries — see [`docs/SECURITY.md`](docs/SECURITY.md). The app uses server-side API routes today; chat history does not require JWT setup.
 
-   ```bash
-   npm run dev
-   ```
+### 4. Verify and run
 
-   Open [http://localhost:3000](http://localhost:3000).
+```bash
+npm run verify:setup
+npm run dev
+```
 
-## RAG pipeline (short)
+Open [http://localhost:3000](http://localhost:3000). Sign up, open the sample document or upload a file, wait for processing, then chat.
 
-1. **Upload** — `POST /api/ingest` or `POST /api/upload` stores the file in Supabase Storage and creates a `processing` document row.
-2. **Process** — `POST /api/documents/[id]/process` parses, chunks, embeds, and marks the document `ready` (client polls until complete).
-3. **Chat** — `POST /api/chat` embeds the question, calls `match_chunks` (similarity threshold 0.35, with top-K fallback), and streams GPT-4o with a strict context-only prompt.
+## NPM scripts
+
+| Script | Description |
+|--------|-------------|
+| `npm run dev` | Start Next.js dev server |
+| `npm run build` | Production build |
+| `npm run lint` | ESLint |
+| `npm run verify:setup` | Check required env vars |
+| `npm run db:push` | Apply Supabase migrations to linked project |
+| `npm run db:migrations` | List migration status |
+| `npm run build:sample-embeddings` | Regenerate embeddings for the bundled sample doc (maintainers) |
 
 ## API routes
 
-| Method | Path | Purpose |
-|--------|------|---------|
-| POST | `/api/ingest`, `/api/upload` | Upload file (alias) |
-| POST | `/api/documents/[id]/process` | Chunk + embed document |
-| GET | `/api/documents` | List user documents |
-| GET/DELETE | `/api/documents/[id]` | Fetch or delete one document |
-| GET | `/api/documents/[id]/messages` | Chat history |
-| POST | `/api/chat` | RAG chat (streaming) |
+All routes require Clerk authentication (`401` if unauthenticated).
+
+| Method | Path | Description |
+|--------|------|-------------|
+| `POST` | `/api/ingest`, `/api/upload` | Upload file (`upload` re-exports `ingest`) |
+| `POST` | `/api/documents/[documentId]/process` | Parse, chunk, embed; set document `ready` |
+| `GET` | `/api/documents` | List current user's documents |
+| `DELETE` | `/api/documents` | Delete all documents + storage for user |
+| `GET` | `/api/documents/[documentId]` | Get one document |
+| `DELETE` | `/api/documents/[documentId]` | Delete one document |
+| `GET` | `/api/documents/[documentId]/messages` | Chat history |
+| `DELETE` | `/api/documents/[documentId]/messages` | Clear chat for a document |
+| `POST` | `/api/chat` | RAG chat (streaming UI message response) |
+| `POST` | `/api/onboarding/sample` | Provision demo sample document for new users |
+
+Example Bruno requests live in [`bruno/queriodoc/`](bruno/queriodoc/). Copy [`bruno/environments/local.bru.example`](bruno/environments/local.bru.example) and set your Clerk session cookie for local testing.
+
+## Project structure
+
+```
+app/
+  (auth)/          Sign-in, sign-up
+  (dashboard)/     Documents list, upload
+  (chat)/          Per-document chat UI
+  api/             REST handlers (thin orchestration)
+components/        UI (chat, upload, marketing, layout)
+hooks/             useChat, useDocuments, useUpload, useOnboardingSample
+lib/
+  parsers/         PDF, DOCX, TXT extraction
+  rag/             Chunking, embeddings, vector search, prompts
+  onboarding/      Sample document provisioning
+  supabase/        Admin + browser clients
+supabase/migrations/
+docs/              SECURITY.md, SUPABASE_CLI.md
+scripts/           verify-setup, sample embeddings, dev utilities
+```
 
 ## Deploy on Vercel
 
-1. Import the repo and set the same variables as [`.env.example`](.env.example).
-2. Apply Supabase migrations `001`–`009` on your linked project.
-3. [`vercel.json`](vercel.json) sets longer timeouts for ingest/process/chat routes.
-4. Update the demo URL below after your first production deploy.
+1. Import the repo and add the same variables as [`.env.example`](.env.example).
+2. Run migrations `001`–`013` on your production Supabase project (`npm run db:push` against the linked project).
+3. [`vercel.json`](vercel.json) sets 60s function timeouts for ingest, process, and chat routes.
 
-## Production upgrade path
+## Security
 
-For very large files or high volume, move `process` to a durable queue (Inngest, Trigger.dev). The upload/process split is already in place.
+Server routes use the Supabase **service role** and enforce ownership by Clerk `userId` in application code. See [`docs/SECURITY.md`](docs/SECURITY.md) for RLS, secrets, and vector search scoping.
 
-## Live demo
+## Scaling notes
 
-**Demo:** [https://queriodoc.vercel.app](https://queriodoc.vercel.app)
-
-## Project layout
-
-- **UI:** [`app/`](app/), [`components/`](components/)
-- **API:** [`app/api/`](app/api/) — thin orchestration only
-- **Core:** [`lib/parsers/`](lib/parsers/), [`lib/rag/`](lib/rag/)
+For very large files or high volume, move document processing to a durable queue (Inngest, Trigger.dev, etc.). Upload and process are already separate API steps.
 
 ## License
 
-Private / your choice.
+Private — all rights reserved unless otherwise specified.
